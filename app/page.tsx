@@ -104,13 +104,7 @@ export default function Home() {
       const existingBet = prev.find(b => b.playerId === playerId);
 
       if (existingBet) {
-        if (existingBet.betOnAnswerIndices.includes(betOnAnswerIndex)) {
-          return prev.map(b =>
-            b.playerId === playerId
-              ? { ...b, betOnAnswerIndices: b.betOnAnswerIndices.filter(i => i !== betOnAnswerIndex) }
-              : b
-          );
-        } else if (existingBet.betOnAnswerIndices.length < 2) {
+        if (existingBet.betOnAnswerIndices.length < 2) {
           return prev.map(b =>
             b.playerId === playerId
               ? { ...b, betOnAnswerIndices: [...b.betOnAnswerIndices, betOnAnswerIndex] }
@@ -121,6 +115,16 @@ export default function Home() {
       } else {
         return [...prev, { playerId, betOnAnswerIndices: [betOnAnswerIndex] }];
       }
+    });
+  };
+
+  const removeBet = (playerId: string, betIndex: number) => {
+    setPlayerBets(prev => {
+      return prev.map(b =>
+        b.playerId === playerId
+          ? { ...b, betOnAnswerIndices: b.betOnAnswerIndices.filter((_, i) => i !== betIndex) }
+          : b
+      );
     });
   };
 
@@ -456,7 +460,7 @@ export default function Home() {
 
             <div className="space-y-4">
               <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
-                Place Your Bets (2 chips per player):
+                Place Your Bets (2 chips per player - can bet on same answer twice):
               </h4>
               {players.map((player) => {
                 const playerBet = playerBets.find(b => b.playerId === player.id);
@@ -472,26 +476,46 @@ export default function Home() {
                       <div className="font-semibold text-gray-800 dark:text-gray-100">
                         {player.name}
                       </div>
-                      <div className="flex gap-1">
-                        {[...Array(2)].map((_, i) => (
-                          <div
-                            key={i}
-                            className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
-                              i < betsPlaced
-                                ? 'bg-green-500 text-white'
-                                : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400'
-                            }`}
-                          >
-                            {i < betsPlaced ? '✓' : (i + 1)}
+                      <div className="flex gap-2 items-center">
+                        {playerBet && playerBet.betOnAnswerIndices.length > 0 && (
+                          <div className="flex gap-1">
+                            {playerBet.betOnAnswerIndices.map((betIndex, i) => {
+                              const betAnswer = sortedAnswers[betIndex];
+                              const betPlayer = players.find(p => p.id === betAnswer?.playerId);
+                              return (
+                                <button
+                                  key={i}
+                                  onClick={() => removeBet(player.id, i)}
+                                  className="px-2 py-1 bg-green-600 text-white rounded text-xs hover:bg-red-600 transition-colors"
+                                  title="Click to remove"
+                                >
+                                  {betPlayer?.name}: {betAnswer?.answer}
+                                </button>
+                              );
+                            })}
                           </div>
-                        ))}
+                        )}
+                        <div className="flex gap-1">
+                          {[...Array(2)].map((_, i) => (
+                            <div
+                              key={i}
+                              className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
+                                i < betsPlaced
+                                  ? 'bg-green-500 text-white'
+                                  : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400'
+                              }`}
+                            >
+                              {i < betsPlaced ? '✓' : (i + 1)}
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                       {sortedAnswers.map((answer, index) => {
                         const answerPlayer = players.find(p => p.id === answer.playerId);
-                        const isBetOn = playerBet?.betOnAnswerIndices.includes(index) || false;
-                        const canBet = chipsRemaining > 0 || isBetOn;
+                        const chipsOnThisAnswer = playerBet?.betOnAnswerIndices.filter(i => i === index).length || 0;
+                        const canBet = chipsRemaining > 0;
 
                         return (
                           <button
@@ -499,7 +523,7 @@ export default function Home() {
                             onClick={() => submitBet(player.id, index)}
                             disabled={!canBet}
                             className={`px-4 py-3 rounded-lg transition-colors font-medium relative ${
-                              isBetOn
+                              chipsOnThisAnswer > 0
                                 ? 'bg-green-600 text-white ring-2 ring-green-400'
                                 : canBet
                                 ? 'bg-indigo-600 text-white hover:bg-indigo-700'
@@ -508,9 +532,9 @@ export default function Home() {
                           >
                             <div>{answerPlayer?.name}</div>
                             <div className="text-xl font-bold">{answer.answer}</div>
-                            {isBetOn && (
+                            {chipsOnThisAnswer > 0 && (
                               <div className="absolute top-1 right-1 w-6 h-6 bg-white text-green-600 rounded-full flex items-center justify-center text-xs font-bold">
-                                ✓
+                                {chipsOnThisAnswer}
                               </div>
                             )}
                           </button>
