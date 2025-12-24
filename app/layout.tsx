@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Wits and Wagers",
-  description: "A trivia betting game where players guess answers and bet on who's closest",
+  description: "Un juego de apuestas de trivia donde los jugadores adivinan respuestas y apuestan por la más cercana",
 };
 
 export default function RootLayout({

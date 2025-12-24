@@ -72,7 +72,7 @@ export default function Home() {
 
   const startGame = () => {
     if (filteredQuestions.length === 0) {
-      alert('No questions available with selected labels!');
+      alert('¡No hay preguntas disponibles con las etiquetas seleccionadas!');
       return;
     }
 
@@ -93,7 +93,7 @@ export default function Home() {
 
   const finishAnswering = () => {
     if (playerAnswers.length < players.length) {
-      alert('All players must submit an answer!');
+      alert('¡Todos los jugadores deben enviar una respuesta!');
       return;
     }
     setGamePhase('betting');
@@ -130,7 +130,7 @@ export default function Home() {
 
   const finishBetting = () => {
     if (playerBets.length < players.length || playerBets.some(b => b.betOnAnswerIndices.length < 2)) {
-      alert('All players must place 2 bets!');
+      alert('¡Todos los jugadores deben colocar 2 apuestas!');
       return;
     }
     calculateScores();
@@ -194,7 +194,18 @@ export default function Home() {
     setPlayerAnswers([]);
     setPlayerBets([]);
     setCurrentPlayerAnswerInput({});
+    setGameQuestions([]);
+    setCurrentQuestion(null);
     setGamePhase('setup');
+  };
+
+  const restartRound = () => {
+    if (confirm('¿Estás seguro de que quieres reiniciar la ronda actual?')) {
+      setPlayerAnswers([]);
+      setPlayerBets([]);
+      setCurrentPlayerAnswerInput({});
+      setGamePhase('answering');
+    }
   };
 
   const getWinningAnswerInfo = () => {
@@ -223,7 +234,7 @@ export default function Home() {
 
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
             <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">
-              Add Players
+              Agregar Jugadores
             </h2>
             <div className="flex gap-2 mb-4">
               <input
@@ -231,14 +242,14 @@ export default function Home() {
                 value={newPlayerName}
                 onChange={(e) => setNewPlayerName(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && addPlayer()}
-                placeholder="Enter player name"
+                placeholder="Nombre del jugador"
                 className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
               />
               <button
                 onClick={addPlayer}
                 className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
               >
-                Add
+                Agregar
               </button>
             </div>
 
@@ -256,7 +267,7 @@ export default function Home() {
                       onClick={() => removePlayer(player.id)}
                       className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
                     >
-                      Remove
+                      Eliminar
                     </button>
                   </div>
                 ))}
@@ -267,12 +278,12 @@ export default function Home() {
           {players.length >= 2 && (
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
               <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">
-                Game Settings
+                Configuración del Juego
               </h2>
 
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Number of Rounds: {roundsToPlay}
+                  Número de Rondas: {roundsToPlay}
                 </label>
                 <input
                   type="range"
@@ -285,7 +296,7 @@ export default function Home() {
               </div>
 
               <h3 className="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-100">
-                Filter Questions by Labels
+                Filtrar Preguntas por Etiquetas
               </h3>
               <div className="flex flex-wrap gap-2 mb-4">
                 {availableLabels.map((label) => (
@@ -303,8 +314,8 @@ export default function Home() {
                 ))}
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
-                {filteredQuestions.length} questions available
-                {selectedLabels.length > 0 && ' with selected labels'}
+                {filteredQuestions.length} preguntas disponibles
+                {selectedLabels.length > 0 && ' con las etiquetas seleccionadas'}
               </p>
 
               <button
@@ -312,7 +323,7 @@ export default function Home() {
                 disabled={players.length < 2 || filteredQuestions.length === 0}
                 className="w-full px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-bold text-lg"
               >
-                Start Game
+                Comenzar Juego
               </button>
             </div>
           )}
@@ -320,7 +331,7 @@ export default function Home() {
           {players.length < 2 && (
             <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 text-center">
               <p className="text-yellow-800 dark:text-yellow-200">
-                Add at least 2 players to start the game
+                Agrega al menos 2 jugadores para comenzar el juego
               </p>
             </div>
           )}
@@ -335,10 +346,18 @@ export default function Home() {
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-purple-900 dark:text-purple-300">
-              Round {currentQuestionIndex + 1} of {gameQuestions.length}
+              Ronda {currentQuestionIndex + 1} de {gameQuestions.length}
             </h2>
-            <div className="text-lg font-semibold text-purple-800 dark:text-purple-400">
-              Answering Phase
+            <div className="flex gap-2 items-center">
+              <div className="text-lg font-semibold text-purple-800 dark:text-purple-400">
+                Fase de Respuestas
+              </div>
+              <button
+                onClick={restartRound}
+                className="px-3 py-1 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm font-medium"
+              >
+                Reiniciar Ronda
+              </button>
             </div>
           </div>
 
@@ -360,7 +379,7 @@ export default function Home() {
                         {player.name}
                       </div>
                       <div className="text-sm text-gray-600 dark:text-gray-400">
-                        Score: {player.score}
+                        Puntaje: {player.score}
                       </div>
                     </div>
                     {!hasAnswered ? (
@@ -374,7 +393,7 @@ export default function Home() {
                               [player.id]: e.target.value,
                             }))
                           }
-                          placeholder="Your answer"
+                          placeholder="Tu respuesta"
                           className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg w-32 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-600 dark:text-white"
                         />
                         <button
@@ -386,12 +405,12 @@ export default function Home() {
                           }}
                           className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
                         >
-                          Submit
+                          Enviar
                         </button>
                       </>
                     ) : (
                       <div className="px-4 py-2 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-lg font-medium">
-                        Answer Submitted
+                        Respuesta Enviada
                       </div>
                     )}
                   </div>
@@ -405,7 +424,7 @@ export default function Home() {
             disabled={playerAnswers.length < players.length}
             className="w-full px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-bold text-lg"
           >
-            Continue to Betting ({playerAnswers.length}/{players.length} answered)
+            Continuar a Apuestas ({playerAnswers.length}/{players.length} respondieron)
           </button>
         </div>
       </div>
@@ -420,10 +439,18 @@ export default function Home() {
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-green-900 dark:text-green-300">
-              Round {currentQuestionIndex + 1} of {gameQuestions.length}
+              Ronda {currentQuestionIndex + 1} de {gameQuestions.length}
             </h2>
-            <div className="text-lg font-semibold text-green-800 dark:text-green-400">
-              Betting Phase
+            <div className="flex gap-2 items-center">
+              <div className="text-lg font-semibold text-green-800 dark:text-green-400">
+                Fase de Apuestas
+              </div>
+              <button
+                onClick={restartRound}
+                className="px-3 py-1 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm font-medium"
+              >
+                Reiniciar Ronda
+              </button>
             </div>
           </div>
 
@@ -434,7 +461,7 @@ export default function Home() {
 
             <div className="mb-8">
               <h4 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">
-                All Answers (sorted):
+                Todas las Respuestas (ordenadas):
               </h4>
               <div className="grid gap-3">
                 {sortedAnswers.map((answer, index) => {
@@ -460,7 +487,7 @@ export default function Home() {
 
             <div className="space-y-4">
               <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
-                Place Your Bets (2 chips per player - can bet on same answer twice):
+                Coloca tus Apuestas (2 fichas por jugador - puedes apostar dos veces a la misma respuesta):
               </h4>
               {players.map((player) => {
                 const playerBet = playerBets.find(b => b.playerId === player.id);
@@ -487,7 +514,7 @@ export default function Home() {
                                   key={i}
                                   onClick={() => removeBet(player.id, i)}
                                   className="px-2 py-1 bg-green-600 text-white rounded text-xs hover:bg-red-600 transition-colors"
-                                  title="Click to remove"
+                                  title="Click para remover"
                                 >
                                   {betPlayer?.name}: {betAnswer?.answer}
                                 </button>
@@ -552,7 +579,7 @@ export default function Home() {
             disabled={playerBets.length < players.length || playerBets.some(b => b.betOnAnswerIndices.length < 2)}
             className="w-full px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-bold text-lg"
           >
-            Show Results ({playerBets.reduce((sum, b) => sum + b.betOnAnswerIndices.length, 0)}/{players.length * 2} chips placed)
+            Ver Resultados ({playerBets.reduce((sum, b) => sum + b.betOnAnswerIndices.length, 0)}/{players.length * 2} fichas colocadas)
           </button>
         </div>
       </div>
@@ -570,7 +597,7 @@ export default function Home() {
       <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-orange-100 dark:from-gray-900 dark:to-gray-800 p-8">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl font-bold text-center mb-6 text-orange-900 dark:text-orange-300">
-            Round {currentQuestionIndex + 1} Results
+            Resultados Ronda {currentQuestionIndex + 1}
           </h2>
 
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 mb-6">
@@ -579,7 +606,7 @@ export default function Home() {
             </h3>
             <div className="text-center mb-8">
               <div className="text-lg text-gray-600 dark:text-gray-400 mb-2">
-                Correct Answer:
+                Respuesta Correcta:
               </div>
               <div className="text-5xl font-bold text-green-600 dark:text-green-400">
                 {currentQuestion.answer}
@@ -588,7 +615,7 @@ export default function Home() {
 
             <div className="mb-8">
               <h4 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300">
-                Winning Answer:
+                Respuesta Ganadora:
               </h4>
               <div className="p-6 bg-gradient-to-r from-yellow-100 to-yellow-200 dark:from-yellow-900 dark:to-yellow-800 rounded-lg border-4 border-yellow-400 dark:border-yellow-600">
                 <div className="text-2xl font-bold text-gray-800 dark:text-gray-100">
@@ -602,7 +629,7 @@ export default function Home() {
 
             <div className="mb-8">
               <h4 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300">
-                All Answers:
+                Todas las Respuestas:
               </h4>
               <div className="space-y-2">
                 {sortedAnswers.map((answer, index) => {
@@ -628,7 +655,7 @@ export default function Home() {
                         </div>
                         {isWinning && (
                           <div className="text-yellow-600 dark:text-yellow-400 font-bold">
-                            WINNER
+                            GANADORA
                           </div>
                         )}
                       </div>
@@ -640,7 +667,7 @@ export default function Home() {
 
             <div className="mb-8">
               <h4 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300">
-                Betting Results:
+                Resultados de Apuestas:
               </h4>
               <div className="space-y-3">
                 {players.map((player) => {
@@ -653,7 +680,7 @@ export default function Home() {
                       className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
                     >
                       <div className="font-semibold text-gray-800 dark:text-gray-100 mb-2">
-                        {player.name}'s Bets:
+                        Apuestas de {player.name}:
                       </div>
                       <div className="grid grid-cols-2 gap-2">
                         {playerBet.betOnAnswerIndices.map((betIndex, i) => {
@@ -671,14 +698,14 @@ export default function Home() {
                               }`}
                             >
                               <div className="text-sm text-gray-600 dark:text-gray-400">
-                                Chip {i + 1}
+                                Ficha {i + 1}
                               </div>
                               <div className="font-medium text-gray-800 dark:text-gray-100">
                                 {betPlayer?.name}: {betAnswer?.answer}
                               </div>
                               {isWinningBet && (
                                 <div className="text-green-600 dark:text-green-400 font-bold text-sm mt-1">
-                                  +2 points!
+                                  +2 puntos!
                                 </div>
                               )}
                             </div>
@@ -693,7 +720,7 @@ export default function Home() {
 
             <div>
               <h4 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300">
-                Current Scores:
+                Puntajes Actuales:
               </h4>
               <div className="space-y-2">
                 {[...players]
@@ -719,7 +746,7 @@ export default function Home() {
             onClick={nextQuestion}
             className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-bold text-lg"
           >
-            {currentQuestionIndex + 1 >= gameQuestions.length ? 'View Final Results' : 'Next Question'}
+            {currentQuestionIndex + 1 >= gameQuestions.length ? 'Ver Resultados Finales' : 'Siguiente Pregunta'}
           </button>
         </div>
       </div>
@@ -733,7 +760,7 @@ export default function Home() {
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 p-8">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-5xl font-bold text-center mb-8 text-indigo-900 dark:text-indigo-300">
-            Game Over!
+            ¡Fin del Juego!
           </h2>
 
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 mb-6">
@@ -742,16 +769,16 @@ export default function Home() {
                 {winner && '🏆'}
               </div>
               <h3 className="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-2">
-                {winner?.name} Wins!
+                ¡{winner?.name} Gana!
               </h3>
               <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
-                {winner?.score} points
+                {winner?.score} puntos
               </div>
             </div>
 
             <div>
               <h4 className="text-2xl font-semibold mb-4 text-center text-gray-700 dark:text-gray-300">
-                Final Scores
+                Puntajes Finales
               </h4>
               <div className="space-y-3">
                 {[...players]
@@ -786,7 +813,7 @@ export default function Home() {
             onClick={resetGame}
             className="w-full px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-bold text-lg"
           >
-            Play Again
+            Jugar de Nuevo
           </button>
         </div>
       </div>
