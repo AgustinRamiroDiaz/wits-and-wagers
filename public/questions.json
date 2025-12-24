@@ -1,83 +1,83 @@
 [
   {
-    "question": "What year was the first iPhone released?",
+    "question": "¿En qué año se lanzó el primer iPhone?",
     "answer": 2007,
-    "labels": ["technology", "history"]
+    "labels": ["tecnología", "historia"]
   },
   {
-    "question": "How many episodes of Breaking Bad were produced in total?",
+    "question": "¿Cuántos episodios de Breaking Bad se produjeron en total?",
     "answer": 62,
-    "labels": ["entertainment", "tv-shows"]
+    "labels": ["entretenimiento", "series-tv"]
   },
   {
-    "question": "What is the population of Iceland (in thousands)?",
+    "question": "¿Cuál es la población de Islandia (en miles)?",
     "answer": 380,
-    "labels": ["geography", "population"]
+    "labels": ["geografía", "población"]
   },
   {
-    "question": "How many keys are on a standard piano?",
+    "question": "¿Cuántas teclas tiene un piano estándar?",
     "answer": 88,
-    "labels": ["music", "general"]
+    "labels": ["música", "general"]
   },
   {
-    "question": "What year did World War II end?",
+    "question": "¿En qué año terminó la Segunda Guerra Mundial?",
     "answer": 1945,
-    "labels": ["history", "war"]
+    "labels": ["historia", "guerra"]
   },
   {
-    "question": "How many bones are in an adult human body?",
+    "question": "¿Cuántos huesos tiene un cuerpo humano adulto?",
     "answer": 206,
-    "labels": ["science", "anatomy"]
+    "labels": ["ciencia", "anatomía"]
   },
   {
-    "question": "How many stripes are on the American flag?",
+    "question": "¿Cuántas franjas tiene la bandera de Estados Unidos?",
     "answer": 13,
-    "labels": ["history", "general"]
+    "labels": ["historia", "general"]
   },
   {
-    "question": "What year was Netflix founded?",
+    "question": "¿En qué año se fundó Netflix?",
     "answer": 1997,
-    "labels": ["technology", "entertainment"]
+    "labels": ["tecnología", "entretenimiento"]
   },
   {
-    "question": "How many hearts does an octopus have?",
+    "question": "¿Cuántos corazones tiene un pulpo?",
     "answer": 3,
-    "labels": ["science", "animals"]
+    "labels": ["ciencia", "animales"]
   },
   {
-    "question": "How many squares are on a chess board?",
+    "question": "¿Cuántas casillas tiene un tablero de ajedrez?",
     "answer": 64,
-    "labels": ["games", "general"]
+    "labels": ["juegos", "general"]
   },
   {
-    "question": "What year did the Berlin Wall fall?",
+    "question": "¿En qué año cayó el Muro de Berlín?",
     "answer": 1989,
-    "labels": ["history", "war"]
+    "labels": ["historia", "guerra"]
   },
   {
-    "question": "How many players are on a soccer team on the field?",
+    "question": "¿Cuántos jugadores hay en un equipo de fútbol en el campo?",
     "answer": 11,
-    "labels": ["sports", "general"]
+    "labels": ["deportes", "general"]
   },
   {
-    "question": "What is the boiling point of water in Fahrenheit?",
+    "question": "¿Cuál es el punto de ebullición del agua en Fahrenheit?",
     "answer": 212,
-    "labels": ["science", "general"]
+    "labels": ["ciencia", "general"]
   },
   {
-    "question": "How many Olympic rings are there?",
+    "question": "¿Cuántos anillos olímpicos hay?",
     "answer": 5,
-    "labels": ["sports", "olympics"]
+    "labels": ["deportes", "olimpiadas"]
   },
   {
-    "question": "What year was the first email sent?",
+    "question": "¿En qué año se envió el primer correo electrónico?",
     "answer": 1971,
-    "labels": ["technology", "history"]
+    "labels": ["tecnología", "historia"]
   },
   {
-    "question": "How many time zones does Russia have?",
+    "question": "¿Cuántas zonas horarias tiene Rusia?",
     "answer": 11,
-    "labels": ["geography", "general"]
+    "labels": ["geografía", "general"]
   },
   {
     "question": "¿Cuántos puntos de contacto con el suelo tiene normalmente un base en una postura básica de acroyoga de pie?",
@@ -447,7 +447,7 @@
     {
       "question": "¿Cuántos colores tiene el arcoíris según la clasificación tradicional?",
       "answer": 7,
-      "labels": ["ciencia", "cultura general"]
+      "labels": ["ciencia", "cultura-general"]
     },
     {
       "question": "¿Cuántos litros tiene un metro cúbico de agua?",
@@ -482,6 +482,6 @@
     {
       "question": "¿Cuántas letras tiene el alfabeto español actual?",
       "answer": 27,
-      "labels": ["lengua", "cultura general"]
+      "labels": ["lengua", "cultura-general"]
     }
 ]
