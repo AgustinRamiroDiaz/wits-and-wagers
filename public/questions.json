@@ -358,5 +358,130 @@
     "question": "¿Cuántos giros completos realiza un nadador al completar un largo con vuelta olímpica?",
     "answer": 1,
     "labels": ["natación"]
-  }
+  },
+    {
+      "question": "¿En qué año llegó el ser humano por primera vez a la Luna?",
+      "answer": 1969,
+      "labels": ["historia", "ciencia"]
+    },
+    {
+      "question": "¿Cuántos continentes se reconocen tradicionalmente en el modelo más extendido?",
+      "answer": 7,
+      "labels": ["geografía"]
+    },
+    {
+      "question": "¿Cuántos lados tiene un hexágono?",
+      "answer": 6,
+      "labels": ["matemática"]
+    },
+    {
+      "question": "¿Cuántos segundos tiene una hora?",
+      "answer": 3600,
+      "labels": ["tiempo", "ciencia"]
+    },
+    {
+      "question": "¿En qué año comenzó la Segunda Guerra Mundial?",
+      "answer": 1939,
+      "labels": ["historia"]
+    },
+    {
+      "question": "¿Cuántos elementos químicos tenía la tabla periódica en 2024?",
+      "answer": 118,
+      "labels": ["ciencia", "química"]
+    },
+    {
+      "question": "¿Cuántos planetas tiene el sistema solar?",
+      "answer": 8,
+      "labels": ["astronomía"]
+    },
+    {
+      "question": "¿Cuántos huesos tiene el cuerpo humano adulto?",
+      "answer": 206,
+      "labels": ["biología"]
+    },
+    {
+      "question": "¿En qué año se firmó la Declaración de los Derechos Humanos de la ONU?",
+      "answer": 1948,
+      "labels": ["historia", "política"]
+    },
+    {
+      "question": "¿Cuántas teclas tiene un teclado de piano estándar?",
+      "answer": 88,
+      "labels": ["música"]
+    },
+    {
+      "question": "¿Cuántos grados tiene un ángulo recto?",
+      "answer": 90,
+      "labels": ["matemática"]
+    },
+    {
+      "question": "¿Cuántos días tiene un año bisiesto?",
+      "answer": 366,
+      "labels": ["tiempo", "ciencia"]
+    },
+    {
+      "question": "¿Cuántos metros mide aproximadamente el Monte Everest?",
+      "answer": 8849,
+      "labels": ["geografía"]
+    },
+    {
+      "question": "¿Cuántos jugadores conforman un equipo de básquet en cancha?",
+      "answer": 5,
+      "labels": ["deportes"]
+    },
+    {
+      "question": "¿En qué año cayó el Imperio Romano de Occidente?",
+      "answer": 476,
+      "labels": ["historia"]
+    },
+    {
+      "question": "¿Cuántos minutos dura una hora y media?",
+      "answer": 90,
+      "labels": ["matemática", "tiempo"]
+    },
+    {
+      "question": "¿Cuántos lados tiene un dodecágono?",
+      "answer": 12,
+      "labels": ["matemática"]
+    },
+    {
+      "question": "¿Cuántos colores tiene el arcoíris según la clasificación tradicional?",
+      "answer": 7,
+      "labels": ["ciencia", "cultura general"]
+    },
+    {
+      "question": "¿Cuántos litros tiene un metro cúbico de agua?",
+      "answer": 1000,
+      "labels": ["ciencia"]
+    },
+    {
+      "question": "¿Cuántos años dura un siglo?",
+      "answer": 100,
+      "labels": ["tiempo", "historia"]
+    },
+    {
+      "question": "¿En qué año se inventó la imprenta de tipos móviles de Gutenberg?",
+      "answer": 1440,
+      "labels": ["historia", "tecnología"]
+    },
+    {
+      "question": "¿Cuántas caras tiene un cubo?",
+      "answer": 6,
+      "labels": ["geometría"]
+    },
+    {
+      "question": "¿Cuántos kilómetros tiene aproximadamente el diámetro de la Tierra?",
+      "answer": 12742,
+      "labels": ["geografía", "astronomía"]
+    },
+    {
+      "question": "¿Cuántos meses tienen 31 días?",
+      "answer": 7,
+      "labels": ["tiempo"]
+    },
+    {
+      "question": "¿Cuántas letras tiene el alfabeto español actual?",
+      "answer": 27,
+      "labels": ["lengua", "cultura general"]
+    }
 ]

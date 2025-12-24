@@ -151,6 +151,8 @@ export default function Home() {
       a => a.playerId === winningAnswer.playerId && a.answer === winningAnswer.answer
     );
 
+    const roundBonus = currentQuestionIndex;
+
     setPlayers(prev => prev.map(player => {
       let pointsEarned = 0;
 
@@ -165,6 +167,10 @@ export default function Home() {
           index => index === winningIndex
         ).length;
         pointsEarned += winningBetsCount * 2;
+      }
+
+      if (pointsEarned > 0) {
+        pointsEarned += roundBonus;
       }
 
       return {
@@ -407,9 +413,16 @@ export default function Home() {
       <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 dark:from-gray-900 dark:to-gray-800 p-8">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-purple-900 dark:text-purple-300">
-              Ronda {currentQuestionIndex + 1} de {gameQuestions.length}
-            </h2>
+            <div>
+              <h2 className="text-2xl font-bold text-purple-900 dark:text-purple-300">
+                Ronda {currentQuestionIndex + 1} de {gameQuestions.length}
+              </h2>
+              {currentQuestionIndex > 0 && (
+                <div className="text-sm text-purple-700 dark:text-purple-400 mt-1">
+                  ⭐ Bono de ronda: +{currentQuestionIndex} punto{currentQuestionIndex > 1 ? 's' : ''}
+                </div>
+              )}
+            </div>
             <div className="flex gap-2 items-center">
               <div className="text-lg font-semibold text-purple-800 dark:text-purple-400">
                 Fase de Respuestas
@@ -508,9 +521,16 @@ export default function Home() {
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 dark:from-gray-900 dark:to-gray-800 p-8">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-green-900 dark:text-green-300">
-              Ronda {currentQuestionIndex + 1} de {gameQuestions.length}
-            </h2>
+            <div>
+              <h2 className="text-2xl font-bold text-green-900 dark:text-green-300">
+                Ronda {currentQuestionIndex + 1} de {gameQuestions.length}
+              </h2>
+              {currentQuestionIndex > 0 && (
+                <div className="text-sm text-green-700 dark:text-green-400 mt-1">
+                  ⭐ Bono de ronda: +{currentQuestionIndex} punto{currentQuestionIndex > 1 ? 's' : ''}
+                </div>
+              )}
+            </div>
             <div className="flex gap-2 items-center">
               <div className="text-lg font-semibold text-green-800 dark:text-green-400">
                 Fase de Apuestas
@@ -674,9 +694,16 @@ export default function Home() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-orange-100 dark:from-gray-900 dark:to-gray-800 p-8">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-center mb-6 text-orange-900 dark:text-orange-300">
-            Resultados Ronda {currentQuestionIndex + 1}
-          </h2>
+          <div className="text-center mb-6">
+            <h2 className="text-3xl font-bold text-orange-900 dark:text-orange-300">
+              Resultados Ronda {currentQuestionIndex + 1}
+            </h2>
+            {currentQuestionIndex > 0 && (
+              <div className="text-lg text-orange-700 dark:text-orange-400 mt-2">
+                ⭐ Bono aplicado: +{currentQuestionIndex} punto{currentQuestionIndex > 1 ? 's' : ''}
+              </div>
+            )}
+          </div>
 
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 mb-6">
             <h3 className="text-2xl font-bold text-center mb-4 text-gray-800 dark:text-gray-100">
