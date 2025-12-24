@@ -5,11 +5,6 @@
     "labels": ["technology", "history"]
   },
   {
-    "question": "How many feet tall is the Statue of Liberty (from ground to torch)?",
-    "answer": 305,
-    "labels": ["geography", "landmarks"]
-  },
-  {
     "question": "How many episodes of Breaking Bad were produced in total?",
     "answer": 62,
     "labels": ["entertainment", "tv-shows"]
@@ -35,11 +30,6 @@
     "labels": ["science", "anatomy"]
   },
   {
-    "question": "What is the speed of light in miles per second (rounded)?",
-    "answer": 186282,
-    "labels": ["science", "physics"]
-  },
-  {
     "question": "How many stripes are on the American flag?",
     "answer": 13,
     "labels": ["history", "general"]
@@ -53,11 +43,6 @@
     "question": "How many hearts does an octopus have?",
     "answer": 3,
     "labels": ["science", "animals"]
-  },
-  {
-    "question": "What is the length of the Great Wall of China in miles?",
-    "answer": 13171,
-    "labels": ["geography", "landmarks"]
   },
   {
     "question": "How many squares are on a chess board?",
@@ -95,8 +80,153 @@
     "labels": ["geography", "general"]
   },
   {
-    "question": "What is the diameter of Earth in miles (rounded)?",
-    "answer": 7918,
-    "labels": ["science", "geography"]
+    "question": "¿Cuántos puntos de contacto con el suelo tiene normalmente un base en una postura básica de acroyoga de pie?",
+    "answer": 2,
+    "labels": ["acroyoga", "acrobacias"]
+  },
+  {
+    "question": "¿Cuántas personas participan como mínimo en una figura clásica de acroduo?",
+    "answer": 2,
+    "labels": ["acroduo", "acrobacias"]
+  },
+  {
+    "question": "¿Cuántos grados tiene una rotación completa usada en giros acrobáticos?",
+    "answer": 360,
+    "labels": ["acrobacias"]
+  },
+  {
+    "question": "¿Cuántas respiraciones se recomiendan comúnmente para mantener una postura estable en acroyoga?",
+    "answer": 5,
+    "labels": ["acroyoga", "yoga"]
+  },
+  {
+    "question": "¿Cuántos miembros principales componen un grupo clásico de acroyoga (base, flyer y spotter)?",
+    "answer": 3,
+    "labels": ["acroyoga"]
+  },
+  {
+    "question": "¿Cuántos miembros tiene el saludo al sol A (Surya Namaskar A) en ashtanga yoga?",
+    "answer": 9,
+    "labels": ["yoga"]
+  },
+  {
+    "question": "¿Cuántos chakras principales se describen tradicionalmente en el yoga?",
+    "answer": 7,
+    "labels": ["yoga"]
+  },
+  {
+    "question": "¿Cuántos segundos dura aproximadamente una respiración completa (inhalación + exhalación) en una práctica lenta de yoga?",
+    "answer": 10,
+    "labels": ["yoga"]
+  },
+  {
+    "question": "¿Cuántos estilos clásicos de yoga se mencionan comúnmente en textos modernos (hatha, vinyasa, ashtanga, iyengar, kundalini)?",
+    "answer": 5,
+    "labels": ["yoga"]
+  },
+  {
+    "question": "¿Cuántos metros tiene una pileta olímpica de natación?",
+    "answer": 50,
+    "labels": ["natación"]
+  },
+  {
+    "question": "¿Cuántos carriles tiene una pileta olímpica estándar?",
+    "answer": 8,
+    "labels": ["natación"]
+  },
+  {
+    "question": "¿Cuántos estilos oficiales de natación existen en competencias olímpicas?",
+    "answer": 4,
+    "labels": ["natación"]
+  },
+  {
+    "question": "¿Cuántos metros se nadan en una prueba olímpica de 100 metros libres?",
+    "answer": 100,
+    "labels": ["natación"]
+  },
+  {
+    "question": "¿En qué año se declaró la independencia de Argentina?",
+    "answer": 1816,
+    "labels": ["argentina", "historia"]
+  },
+  {
+    "question": "¿Cuántas provincias tiene la República Argentina?",
+    "answer": 23,
+    "labels": ["argentina", "geografía"]
+  },
+  {
+    "question": "¿En qué año se fundó la ciudad de Buenos Aires por segunda vez?",
+    "answer": 1580,
+    "labels": ["argentina", "historia"]
+  },
+  {
+    "question": "¿Cuántos habitantes aproximados tenía Argentina según el censo de 2022 (en millones, redondeado)?",
+    "answer": 46,
+    "labels": ["argentina", "demografía"]
+  },
+  {
+    "question": "¿Cuántos jugadores por equipo hay en el campo en un partido oficial de fútbol?",
+    "answer": 11,
+    "labels": ["fútbol"]
+  },
+  {
+    "question": "¿Cuántos minutos dura un partido de fútbol reglamentario sin tiempo añadido?",
+    "answer": 90,
+    "labels": ["fútbol"]
+  },
+  {
+    "question": "¿Cuántos mundiales de fútbol ganó la selección argentina hasta 2022?",
+    "answer": 3,
+    "labels": ["fútbol", "argentina"]
+  },
+  {
+    "question": "¿Cuántos puntos vale la letra Z en el Scrabble en español?",
+    "answer": 10,
+    "labels": ["scrabble", "juegos"]
+  },
+  {
+    "question": "¿Cuántas fichas tiene cada jugador al inicio de una partida estándar de Scrabble?",
+    "answer": 7,
+    "labels": ["scrabble", "juegos"]
+  },
+  {
+    "question": "¿Cuántas casillas tiene el tablero de Scrabble (15 x 15)?",
+    "answer": 225,
+    "labels": ["scrabble", "juegos"]
+  },
+  {
+    "question": "¿Cuántos meses dura aproximadamente el ciclo de crecimiento del trigo?",
+    "answer": 6,
+    "labels": ["agricultura"]
+  },
+  {
+    "question": "¿Cuántos litros de agua se estiman necesarios para producir 1 kg de trigo?",
+    "answer": 1300,
+    "labels": ["agricultura"]
+  },
+  {
+    "question": "¿Cuántos acordes básicos mayores existen en la escala musical occidental?",
+    "answer": 7,
+    "labels": ["música", "piano"]
+  },
+  {
+    "question": "¿Cuántas teclas tiene un piano estándar moderno?",
+    "answer": 88,
+    "labels": ["música", "piano"]
+  },
+  {
+    "question": "¿Cuántas teclas blancas tiene un piano estándar?",
+    "answer": 52,
+    "labels": ["música", "piano"]
+  },
+  {
+    "question": "¿Cuántas teclas negras tiene un piano estándar?",
+    "answer": 36,
+    "labels": ["música", "piano"]
+  },
+  {
+    "question": "¿Cuántos compases tiene una estructura básica de blues tradicional usada en piano?",
+    "answer": 12,
+    "labels": ["música", "piano"]
   }
 ]
