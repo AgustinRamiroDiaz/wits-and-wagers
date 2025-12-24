@@ -359,274 +359,424 @@
     "answer": 1,
     "labels": ["natación"]
   },
-    {
-      "question": "¿En qué año llegó el ser humano por primera vez a la Luna?",
-      "answer": 1969,
-      "labels": ["historia", "ciencia"]
-    },
-    {
-      "question": "¿Cuántos continentes se reconocen tradicionalmente en el modelo más extendido?",
-      "answer": 7,
-      "labels": ["geografía"]
-    },
-    {
-      "question": "¿Cuántos lados tiene un hexágono?",
-      "answer": 6,
-      "labels": ["matemática"]
-    },
-    {
-      "question": "¿Cuántos segundos tiene una hora?",
-      "answer": 3600,
-      "labels": ["tiempo", "ciencia"]
-    },
-    {
-      "question": "¿En qué año comenzó la Segunda Guerra Mundial?",
-      "answer": 1939,
-      "labels": ["historia"]
-    },
-    {
-      "question": "¿Cuántos elementos químicos tenía la tabla periódica en 2024?",
-      "answer": 118,
-      "labels": ["ciencia", "química"]
-    },
-    {
-      "question": "¿Cuántos planetas tiene el sistema solar?",
-      "answer": 8,
-      "labels": ["astronomía"]
-    },
-    {
-      "question": "¿Cuántos huesos tiene el cuerpo humano adulto?",
-      "answer": 206,
-      "labels": ["biología"]
-    },
-    {
-      "question": "¿En qué año se firmó la Declaración de los Derechos Humanos de la ONU?",
-      "answer": 1948,
-      "labels": ["historia", "política"]
-    },
-    {
-      "question": "¿Cuántas teclas tiene un teclado de piano estándar?",
-      "answer": 88,
-      "labels": ["música"]
-    },
-    {
-      "question": "¿Cuántos grados tiene un ángulo recto?",
-      "answer": 90,
-      "labels": ["matemática"]
-    },
-    {
-      "question": "¿Cuántos días tiene un año bisiesto?",
-      "answer": 366,
-      "labels": ["tiempo", "ciencia"]
-    },
-    {
-      "question": "¿Cuántos metros mide aproximadamente el Monte Everest?",
-      "answer": 8849,
-      "labels": ["geografía"]
-    },
-    {
-      "question": "¿Cuántos jugadores conforman un equipo de básquet en cancha?",
-      "answer": 5,
-      "labels": ["deportes"]
-    },
-    {
-      "question": "¿En qué año cayó el Imperio Romano de Occidente?",
-      "answer": 476,
-      "labels": ["historia"]
-    },
-    {
-      "question": "¿Cuántos minutos dura una hora y media?",
-      "answer": 90,
-      "labels": ["matemática", "tiempo"]
-    },
-    {
-      "question": "¿Cuántos lados tiene un dodecágono?",
-      "answer": 12,
-      "labels": ["matemática"]
-    },
-    {
-      "question": "¿Cuántos colores tiene el arcoíris según la clasificación tradicional?",
-      "answer": 7,
-      "labels": ["ciencia", "cultura-general"]
-    },
-    {
-      "question": "¿Cuántos litros tiene un metro cúbico de agua?",
-      "answer": 1000,
-      "labels": ["ciencia"]
-    },
-    {
-      "question": "¿Cuántos años dura un siglo?",
-      "answer": 100,
-      "labels": ["tiempo", "historia"]
-    },
-    {
-      "question": "¿En qué año se inventó la imprenta de tipos móviles de Gutenberg?",
-      "answer": 1440,
-      "labels": ["historia", "tecnología"]
-    },
-    {
-      "question": "¿Cuántas caras tiene un cubo?",
-      "answer": 6,
-      "labels": ["geometría"]
-    },
-    {
-      "question": "¿Cuántos kilómetros tiene aproximadamente el diámetro de la Tierra?",
-      "answer": 12742,
-      "labels": ["geografía", "astronomía"]
-    },
-    {
-      "question": "¿Cuántos meses tienen 31 días?",
-      "answer": 7,
-      "labels": ["tiempo"]
-    },
-    {
-      "question": "¿Cuántas letras tiene el alfabeto español actual?",
-      "answer": 27,
-      "labels": ["lengua", "cultura-general"]
-    },
-      {
-        "question": "¿En qué año se publicó por primera vez la novela \"Don Quijote de la Mancha\" (primera parte)?",
-        "answer": 1605,
-        "labels": ["literatura", "historia"]
-      },
-      {
-        "question": "¿Cuántos cantos componen la obra \"La Divina Comedia\" de Dante Alighieri?",
-        "answer": 100,
-        "labels": ["literatura"]
-      },
-      {
-        "question": "¿En qué año nació William Shakespeare?",
-        "answer": 1564,
-        "labels": ["literatura", "historia"]
-      },
-      {
-        "question": "¿Cuántas novelas escribió Jane Austen?",
-        "answer": 6,
-        "labels": ["literatura"]
-      },
-      {
-        "question": "¿En qué año se publicó por primera vez \"Cien años de soledad\" de Gabriel García Márquez?",
-        "answer": 1967,
-        "labels": ["literatura", "literatura latinoamericana"]
-      },
-      {
-        "question": "¿Cuántos libros componen la serie original de \"Harry Potter\" escrita por J. K. Rowling?",
-        "answer": 7,
-        "labels": ["literatura", "literatura contemporánea"]
-      },
-      {
-        "question": "¿En qué año nació Jorge Luis Borges?",
-        "answer": 1899,
-        "labels": ["literatura", "literatura argentina"]
-      },
-      {
-        "question": "¿Cuántos actos tiene una obra teatral clásica según la división tradicional?",
-        "answer": 5,
-        "labels": ["literatura", "teatro"]
-      },
-      {
-        "question": "¿En qué año se publicó \"La metamorfosis\" de Franz Kafka?",
-        "answer": 1915,
-        "labels": ["literatura", "literatura europea"]
-      },
-      {
-        "question": "¿Cuántos sonetos escribió aproximadamente William Shakespeare?",
-        "answer": 154,
-        "labels": ["literatura", "poesía"]
-      },
-      {
-        "question": "¿En qué año se publicó \"Rayuela\" de Julio Cortázar?",
-        "answer": 1963,
-        "labels": ["literatura", "literatura argentina"]
-      },
-      {
-        "question": "¿Cuántos libros componen \"La Ilíada\" y \"La Odisea\" cada una?",
-        "answer": 24,
-        "labels": ["literatura", "literatura clásica"]
-      },
-      {
-        "question": "¿En qué año murió Miguel de Cervantes?",
-        "answer": 1616,
-        "labels": ["literatura", "historia"]
-      },
-      {
-        "question": "¿Cuántos versos tiene un soneto clásico?",
-        "answer": 14,
-        "labels": ["literatura", "poesía"]
-      },
-      {
-        "question": "¿Cuántos ingredientes básicos componen tradicionalmente una masa de pizza clásica (harina, agua, levadura, sal)?",
-        "answer": 4,
-        "labels": ["cocina", "cocina del mundo"]
-      },
-      {
-        "question": "¿A cuántos grados Celsius hierve el agua a nivel del mar?",
-        "answer": 100,
-        "labels": ["cocina", "ciencia"]
-      },
-      {
-        "question": "¿Cuántos minutos se hierven tradicionalmente los huevos para que queden duros?",
-        "answer": 10,
-        "labels": ["cocina"]
-      },
-      {
-        "question": "¿Cuántos tipos principales de corte de carne vacuna se reconocen comúnmente en la parrilla argentina?",
-        "answer": 6,
-        "labels": ["cocina argentina"]
-      },
-      {
-        "question": "¿Cuántos pliegues tiene clásicamente una empanada argentina bien cerrada?",
-        "answer": 13,
-        "labels": ["cocina argentina"]
-      },
-      {
-        "question": "¿Cuántos gramos de arroz por persona se calculan en promedio para un plato principal?",
-        "answer": 100,
-        "labels": ["cocina"]
-      },
-      {
-        "question": "¿Cuántos minutos se cocina aproximadamente una pasta seca al dente?",
-        "answer": 10,
-        "labels": ["cocina", "cocina del mundo"]
-      },
-      {
-        "question": "¿Cuántos ingredientes básicos tiene el pesto genovés tradicional?",
-        "answer": 7,
-        "labels": ["cocina del mundo", "cocina italiana"]
-      },
-      {
-        "question": "¿Cuántos minutos se cocina típicamente un bife de chorizo jugoso por lado a la parrilla?",
-        "answer": 7,
-        "labels": ["cocina argentina"]
-      },
-      {
-        "question": "¿Cuántas capas de masa tiene tradicionalmente una lasaña clásica?",
-        "answer": 3,
-        "labels": ["cocina del mundo"]
-      },
-      {
-        "question": "¿Cuántos gramos de sal por litro de agua se recomiendan para cocinar pasta?",
-        "answer": 10,
-        "labels": ["cocina", "cocina del mundo"]
-      },
-      {
-        "question": "¿Cuántos minutos se deja reposar la carne luego de cocinarla antes de cortarla?",
-        "answer": 5,
-        "labels": ["cocina", "cocina argentina"]
-      },
-      {
-        "question": "¿Cuántos ingredientes básicos componen el chimichurri argentino tradicional?",
-        "answer": 5,
-        "labels": ["cocina argentina"]
-      },
-      {
-        "question": "¿Cuántos gramos pesa aproximadamente una milanesa vacuna estándar antes de cocinarse?",
-        "answer": 200,
-        "labels": ["cocina argentina"]
-      },
-      {
-        "question": "¿Cuántos minutos se fríen papas bastón para que queden doradas y crocantes?",
-        "answer": 5,
-        "labels": ["cocina", "cocina del mundo"]
-      }
+  {
+    "question": "¿En qué año llegó el ser humano por primera vez a la Luna?",
+    "answer": 1969,
+    "labels": ["historia", "ciencia"]
+  },
+  {
+    "question": "¿Cuántos continentes se reconocen tradicionalmente en el modelo más extendido?",
+    "answer": 7,
+    "labels": ["geografía"]
+  },
+  {
+    "question": "¿Cuántos lados tiene un hexágono?",
+    "answer": 6,
+    "labels": ["matemática"]
+  },
+  {
+    "question": "¿Cuántos segundos tiene una hora?",
+    "answer": 3600,
+    "labels": ["tiempo", "ciencia"]
+  },
+  {
+    "question": "¿En qué año comenzó la Segunda Guerra Mundial?",
+    "answer": 1939,
+    "labels": ["historia"]
+  },
+  {
+    "question": "¿Cuántos elementos químicos tenía la tabla periódica en 2024?",
+    "answer": 118,
+    "labels": ["ciencia", "química"]
+  },
+  {
+    "question": "¿Cuántos planetas tiene el sistema solar?",
+    "answer": 8,
+    "labels": ["astronomía"]
+  },
+  {
+    "question": "¿Cuántos huesos tiene el cuerpo humano adulto?",
+    "answer": 206,
+    "labels": ["biología"]
+  },
+  {
+    "question": "¿En qué año se firmó la Declaración de los Derechos Humanos de la ONU?",
+    "answer": 1948,
+    "labels": ["historia", "política"]
+  },
+  {
+    "question": "¿Cuántas teclas tiene un teclado de piano estándar?",
+    "answer": 88,
+    "labels": ["música"]
+  },
+  {
+    "question": "¿Cuántos grados tiene un ángulo recto?",
+    "answer": 90,
+    "labels": ["matemática"]
+  },
+  {
+    "question": "¿Cuántos días tiene un año bisiesto?",
+    "answer": 366,
+    "labels": ["tiempo", "ciencia"]
+  },
+  {
+    "question": "¿Cuántos metros mide aproximadamente el Monte Everest?",
+    "answer": 8849,
+    "labels": ["geografía"]
+  },
+  {
+    "question": "¿Cuántos jugadores conforman un equipo de básquet en cancha?",
+    "answer": 5,
+    "labels": ["deportes"]
+  },
+  {
+    "question": "¿En qué año cayó el Imperio Romano de Occidente?",
+    "answer": 476,
+    "labels": ["historia"]
+  },
+  {
+    "question": "¿Cuántos minutos dura una hora y media?",
+    "answer": 90,
+    "labels": ["matemática", "tiempo"]
+  },
+  {
+    "question": "¿Cuántos lados tiene un dodecágono?",
+    "answer": 12,
+    "labels": ["matemática"]
+  },
+  {
+    "question": "¿Cuántos colores tiene el arcoíris según la clasificación tradicional?",
+    "answer": 7,
+    "labels": ["ciencia", "cultura-general"]
+  },
+  {
+    "question": "¿Cuántos litros tiene un metro cúbico de agua?",
+    "answer": 1000,
+    "labels": ["ciencia"]
+  },
+  {
+    "question": "¿Cuántos años dura un siglo?",
+    "answer": 100,
+    "labels": ["tiempo", "historia"]
+  },
+  {
+    "question": "¿En qué año se inventó la imprenta de tipos móviles de Gutenberg?",
+    "answer": 1440,
+    "labels": ["historia", "tecnología"]
+  },
+  {
+    "question": "¿Cuántas caras tiene un cubo?",
+    "answer": 6,
+    "labels": ["geometría"]
+  },
+  {
+    "question": "¿Cuántos kilómetros tiene aproximadamente el diámetro de la Tierra?",
+    "answer": 12742,
+    "labels": ["geografía", "astronomía"]
+  },
+  {
+    "question": "¿Cuántos meses tienen 31 días?",
+    "answer": 7,
+    "labels": ["tiempo"]
+  },
+  {
+    "question": "¿Cuántas letras tiene el alfabeto español actual?",
+    "answer": 27,
+    "labels": ["lengua", "cultura-general"]
+  },
+  {
+    "question": "¿En qué año se publicó por primera vez la novela \"Don Quijote de la Mancha\" (primera parte)?",
+    "answer": 1605,
+    "labels": ["literatura", "historia"]
+  },
+  {
+    "question": "¿Cuántos cantos componen la obra \"La Divina Comedia\" de Dante Alighieri?",
+    "answer": 100,
+    "labels": ["literatura"]
+  },
+  {
+    "question": "¿En qué año nació William Shakespeare?",
+    "answer": 1564,
+    "labels": ["literatura", "historia"]
+  },
+  {
+    "question": "¿Cuántas novelas escribió Jane Austen?",
+    "answer": 6,
+    "labels": ["literatura"]
+  },
+  {
+    "question": "¿En qué año se publicó por primera vez \"Cien años de soledad\" de Gabriel García Márquez?",
+    "answer": 1967,
+    "labels": ["literatura", "literatura latinoamericana"]
+  },
+  {
+    "question": "¿Cuántos libros componen la serie original de \"Harry Potter\" escrita por J. K. Rowling?",
+    "answer": 7,
+    "labels": ["literatura", "literatura contemporánea"]
+  },
+  {
+    "question": "¿En qué año nació Jorge Luis Borges?",
+    "answer": 1899,
+    "labels": ["literatura", "literatura argentina"]
+  },
+  {
+    "question": "¿Cuántos actos tiene una obra teatral clásica según la división tradicional?",
+    "answer": 5,
+    "labels": ["literatura", "teatro"]
+  },
+  {
+    "question": "¿En qué año se publicó \"La metamorfosis\" de Franz Kafka?",
+    "answer": 1915,
+    "labels": ["literatura", "literatura europea"]
+  },
+  {
+    "question": "¿Cuántos sonetos escribió aproximadamente William Shakespeare?",
+    "answer": 154,
+    "labels": ["literatura", "poesía"]
+  },
+  {
+    "question": "¿En qué año se publicó \"Rayuela\" de Julio Cortázar?",
+    "answer": 1963,
+    "labels": ["literatura", "literatura argentina"]
+  },
+  {
+    "question": "¿Cuántos libros componen \"La Ilíada\" y \"La Odisea\" cada una?",
+    "answer": 24,
+    "labels": ["literatura", "literatura clásica"]
+  },
+  {
+    "question": "¿En qué año murió Miguel de Cervantes?",
+    "answer": 1616,
+    "labels": ["literatura", "historia"]
+  },
+  {
+    "question": "¿Cuántos versos tiene un soneto clásico?",
+    "answer": 14,
+    "labels": ["literatura", "poesía"]
+  },
+  {
+    "question": "¿Cuántos ingredientes básicos componen tradicionalmente una masa de pizza clásica (harina, agua, levadura, sal)?",
+    "answer": 4,
+    "labels": ["cocina", "cocina del mundo"]
+  },
+  {
+    "question": "¿A cuántos grados Celsius hierve el agua a nivel del mar?",
+    "answer": 100,
+    "labels": ["cocina", "ciencia"]
+  },
+  {
+    "question": "¿Cuántos minutos se hierven tradicionalmente los huevos para que queden duros?",
+    "answer": 10,
+    "labels": ["cocina"]
+  },
+  {
+    "question": "¿Cuántos tipos principales de corte de carne vacuna se reconocen comúnmente en la parrilla argentina?",
+    "answer": 6,
+    "labels": ["cocina argentina"]
+  },
+  {
+    "question": "¿Cuántos pliegues tiene clásicamente una empanada argentina bien cerrada?",
+    "answer": 13,
+    "labels": ["cocina argentina"]
+  },
+  {
+    "question": "¿Cuántos gramos de arroz por persona se calculan en promedio para un plato principal?",
+    "answer": 100,
+    "labels": ["cocina"]
+  },
+  {
+    "question": "¿Cuántos minutos se cocina aproximadamente una pasta seca al dente?",
+    "answer": 10,
+    "labels": ["cocina", "cocina del mundo"]
+  },
+  {
+    "question": "¿Cuántos ingredientes básicos tiene el pesto genovés tradicional?",
+    "answer": 7,
+    "labels": ["cocina del mundo", "cocina italiana"]
+  },
+  {
+    "question": "¿Cuántos minutos se cocina típicamente un bife de chorizo jugoso por lado a la parrilla?",
+    "answer": 7,
+    "labels": ["cocina argentina"]
+  },
+  {
+    "question": "¿Cuántas capas de masa tiene tradicionalmente una lasaña clásica?",
+    "answer": 3,
+    "labels": ["cocina del mundo"]
+  },
+  {
+    "question": "¿Cuántos gramos de sal por litro de agua se recomiendan para cocinar pasta?",
+    "answer": 10,
+    "labels": ["cocina", "cocina del mundo"]
+  },
+  {
+    "question": "¿Cuántos minutos se deja reposar la carne luego de cocinarla antes de cortarla?",
+    "answer": 5,
+    "labels": ["cocina", "cocina argentina"]
+  },
+  {
+    "question": "¿Cuántos ingredientes básicos componen el chimichurri argentino tradicional?",
+    "answer": 5,
+    "labels": ["cocina argentina"]
+  },
+  {
+    "question": "¿Cuántos gramos pesa aproximadamente una milanesa vacuna estándar antes de cocinarse?",
+    "answer": 200,
+    "labels": ["cocina argentina"]
+  },
+  {
+    "question": "¿Cuántos minutos se fríen papas bastón para que queden doradas y crocantes?",
+    "answer": 5,
+    "labels": ["cocina", "cocina del mundo"]
+  },
+  {
+    "question": "¿Cuántos continentes existen según el modelo geográfico más utilizado a nivel mundial?",
+    "answer": 7,
+    "labels": ["geografía", "mundo"]
+  },
+  {
+    "question": "¿Cuántos países miembros tiene actualmente la Organización de las Naciones Unidas?",
+    "answer": 193,
+    "labels": ["geografía", "mundo", "política"]
+  },
+  {
+    "question": "¿Cuántos océanos se reconocen oficialmente en la actualidad?",
+    "answer": 5,
+    "labels": ["geografía", "mundo"]
+  },
+  {
+    "question": "¿Cuántos husos horarios principales existen en la Tierra?",
+    "answer": 24,
+    "labels": ["geografía", "mundo", "tiempo"]
+  },
+  {
+    "question": "¿Cuántos kilómetros mide aproximadamente el río Amazonas?",
+    "answer": 6400,
+    "labels": ["geografía", "mundo"]
+  },
+  {
+    "question": "¿Cuántos países forman parte de América del Sur?",
+    "answer": 12,
+    "labels": ["geografía", "mundo"]
+  },
+  {
+    "question": "¿Cuántos metros sobre el nivel del mar mide el Monte Everest?",
+    "answer": 8849,
+    "labels": ["geografía", "mundo"]
+  },
+  {
+    "question": "¿Cuántos países integran la Unión Europea desde 2020?",
+    "answer": 27,
+    "labels": ["geografía", "mundo", "política"]
+  },
+  {
+    "question": "¿Cuántos kilómetros cuadrados tiene aproximadamente el desierto del Sahara (en millones, redondeado)?",
+    "answer": 9,
+    "labels": ["geografía", "mundo"]
+  },
+  {
+    "question": "¿Cuántos mares bordean directamente el continente europeo?",
+    "answer": 8,
+    "labels": ["geografía", "mundo"]
+  },
+  {
+    "question": "¿Cuántos países atraviesa el río Danubio a lo largo de su recorrido?",
+    "answer": 10,
+    "labels": ["geografía", "mundo"]
+  },
+  {
+    "question": "¿Cuántos kilómetros mide aproximadamente el diámetro de la Tierra?",
+    "answer": 12742,
+    "labels": ["geografía", "mundo", "astronomía"]
+  },
+  {
+    "question": "¿Cuántos países no tienen salida al mar en el mundo?",
+    "answer": 44,
+    "labels": ["geografía", "mundo"]
+  },
+  {
+    "question": "¿Cuántos metros bajo el nivel del mar se encuentra aproximadamente la superficie del Mar Muerto?",
+    "answer": 430,
+    "labels": ["geografía", "mundo"]
+  },
+  {
+    "question": "¿Cuántos países conforman el continente africano?",
+    "answer": 54,
+    "labels": ["geografía", "mundo"]
+  },
+  {
+    "question": "¿Cuántas letras tiene el alfabeto español actual?",
+    "answer": 27,
+    "labels": ["lenguaje", "alfabeto"]
+  },
+  {
+    "question": "¿Cuántas letras tiene el alfabeto inglés?",
+    "answer": 26,
+    "labels": ["lenguaje", "alfabeto"]
+  },
+  {
+    "question": "¿Cuántas letras tiene el alfabeto griego clásico?",
+    "answer": 24,
+    "labels": ["lenguaje", "alfabeto"]
+  },
+  {
+    "question": "¿Cuántos caracteres tiene el sistema de escritura hiragana del japonés?",
+    "answer": 46,
+    "labels": ["lenguaje", "escritura"]
+  },
+  {
+    "question": "¿Cuántos caracteres tiene el sistema de escritura katakana del japonés?",
+    "answer": 46,
+    "labels": ["lenguaje", "escritura"]
+  },
+  {
+    "question": "¿Cuántos caracteres básicos tiene el alfabeto cirílico moderno?",
+    "answer": 33,
+    "labels": ["lenguaje", "alfabeto"]
+  },
+  {
+    "question": "¿Cuántas letras tiene el alfabeto árabe?",
+    "answer": 28,
+    "labels": ["lenguaje", "alfabeto"]
+  },
+  {
+    "question": "¿Cuántos caracteres componen el sistema Hangul básico del coreano?",
+    "answer": 24,
+    "labels": ["lenguaje", "escritura"]
+  },
+  {
+    "question": "¿Cuántos tonos tiene el mandarín estándar?",
+    "answer": 4,
+    "labels": ["lenguaje", "fonética"]
+  },
+  {
+    "question": "¿Cuántas letras tenía el alfabeto latino clásico?",
+    "answer": 23,
+    "labels": ["lenguaje", "historia"]
+  },
+  {
+    "question": "¿Cuántos idiomas oficiales reconoce la Unión Europea?",
+    "answer": 24,
+    "labels": ["lenguaje", "mundo"]
+  },
+  {
+    "question": "¿Cuántos idiomas oficiales existen en la India?",
+    "answer": 22,
+    "labels": ["lenguaje", "mundo"]
+  },
+  {
+    "question": "¿Cuántas letras tiene el alfabeto hebreo?",
+    "answer": 22,
+    "labels": ["lenguaje", "alfabeto"]
+  },
+  {
+    "question": "¿Cuántas sílabas tiene la palabra \"murciélago\"?",
+    "answer": 4,
+    "labels": ["lenguaje", "palabras"]
+  },
+  {
+    "question": "¿Cuántas letras tiene la palabra \"electroencefalografista\"?",
+    "answer": 23,
+    "labels": ["lenguaje", "palabras"]
+  }
 ]
