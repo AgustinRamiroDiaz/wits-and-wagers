@@ -483,5 +483,150 @@
       "question": "¿Cuántas letras tiene el alfabeto español actual?",
       "answer": 27,
       "labels": ["lengua", "cultura-general"]
-    }
+    },
+      {
+        "question": "¿En qué año se publicó por primera vez la novela \"Don Quijote de la Mancha\" (primera parte)?",
+        "answer": 1605,
+        "labels": ["literatura", "historia"]
+      },
+      {
+        "question": "¿Cuántos cantos componen la obra \"La Divina Comedia\" de Dante Alighieri?",
+        "answer": 100,
+        "labels": ["literatura"]
+      },
+      {
+        "question": "¿En qué año nació William Shakespeare?",
+        "answer": 1564,
+        "labels": ["literatura", "historia"]
+      },
+      {
+        "question": "¿Cuántas novelas escribió Jane Austen?",
+        "answer": 6,
+        "labels": ["literatura"]
+      },
+      {
+        "question": "¿En qué año se publicó por primera vez \"Cien años de soledad\" de Gabriel García Márquez?",
+        "answer": 1967,
+        "labels": ["literatura", "literatura latinoamericana"]
+      },
+      {
+        "question": "¿Cuántos libros componen la serie original de \"Harry Potter\" escrita por J. K. Rowling?",
+        "answer": 7,
+        "labels": ["literatura", "literatura contemporánea"]
+      },
+      {
+        "question": "¿En qué año nació Jorge Luis Borges?",
+        "answer": 1899,
+        "labels": ["literatura", "literatura argentina"]
+      },
+      {
+        "question": "¿Cuántos actos tiene una obra teatral clásica según la división tradicional?",
+        "answer": 5,
+        "labels": ["literatura", "teatro"]
+      },
+      {
+        "question": "¿En qué año se publicó \"La metamorfosis\" de Franz Kafka?",
+        "answer": 1915,
+        "labels": ["literatura", "literatura europea"]
+      },
+      {
+        "question": "¿Cuántos sonetos escribió aproximadamente William Shakespeare?",
+        "answer": 154,
+        "labels": ["literatura", "poesía"]
+      },
+      {
+        "question": "¿En qué año se publicó \"Rayuela\" de Julio Cortázar?",
+        "answer": 1963,
+        "labels": ["literatura", "literatura argentina"]
+      },
+      {
+        "question": "¿Cuántos libros componen \"La Ilíada\" y \"La Odisea\" cada una?",
+        "answer": 24,
+        "labels": ["literatura", "literatura clásica"]
+      },
+      {
+        "question": "¿En qué año murió Miguel de Cervantes?",
+        "answer": 1616,
+        "labels": ["literatura", "historia"]
+      },
+      {
+        "question": "¿Cuántos versos tiene un soneto clásico?",
+        "answer": 14,
+        "labels": ["literatura", "poesía"]
+      },
+      {
+        "question": "¿Cuántos ingredientes básicos componen tradicionalmente una masa de pizza clásica (harina, agua, levadura, sal)?",
+        "answer": 4,
+        "labels": ["cocina", "cocina del mundo"]
+      },
+      {
+        "question": "¿A cuántos grados Celsius hierve el agua a nivel del mar?",
+        "answer": 100,
+        "labels": ["cocina", "ciencia"]
+      },
+      {
+        "question": "¿Cuántos minutos se hierven tradicionalmente los huevos para que queden duros?",
+        "answer": 10,
+        "labels": ["cocina"]
+      },
+      {
+        "question": "¿Cuántos tipos principales de corte de carne vacuna se reconocen comúnmente en la parrilla argentina?",
+        "answer": 6,
+        "labels": ["cocina argentina"]
+      },
+      {
+        "question": "¿Cuántos pliegues tiene clásicamente una empanada argentina bien cerrada?",
+        "answer": 13,
+        "labels": ["cocina argentina"]
+      },
+      {
+        "question": "¿Cuántos gramos de arroz por persona se calculan en promedio para un plato principal?",
+        "answer": 100,
+        "labels": ["cocina"]
+      },
+      {
+        "question": "¿Cuántos minutos se cocina aproximadamente una pasta seca al dente?",
+        "answer": 10,
+        "labels": ["cocina", "cocina del mundo"]
+      },
+      {
+        "question": "¿Cuántos ingredientes básicos tiene el pesto genovés tradicional?",
+        "answer": 7,
+        "labels": ["cocina del mundo", "cocina italiana"]
+      },
+      {
+        "question": "¿Cuántos minutos se cocina típicamente un bife de chorizo jugoso por lado a la parrilla?",
+        "answer": 7,
+        "labels": ["cocina argentina"]
+      },
+      {
+        "question": "¿Cuántas capas de masa tiene tradicionalmente una lasaña clásica?",
+        "answer": 3,
+        "labels": ["cocina del mundo"]
+      },
+      {
+        "question": "¿Cuántos gramos de sal por litro de agua se recomiendan para cocinar pasta?",
+        "answer": 10,
+        "labels": ["cocina", "cocina del mundo"]
+      },
+      {
+        "question": "¿Cuántos minutos se deja reposar la carne luego de cocinarla antes de cortarla?",
+        "answer": 5,
+        "labels": ["cocina", "cocina argentina"]
+      },
+      {
+        "question": "¿Cuántos ingredientes básicos componen el chimichurri argentino tradicional?",
+        "answer": 5,
+        "labels": ["cocina argentina"]
+      },
+      {
+        "question": "¿Cuántos gramos pesa aproximadamente una milanesa vacuna estándar antes de cocinarse?",
+        "answer": 200,
+        "labels": ["cocina argentina"]
+      },
+      {
+        "question": "¿Cuántos minutos se fríen papas bastón para que queden doradas y crocantes?",
+        "answer": 5,
+        "labels": ["cocina", "cocina del mundo"]
+      }
 ]
