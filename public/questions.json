@@ -1,0 +1,102 @@
+[
+  {
+    "question": "What year was the first iPhone released?",
+    "answer": 2007,
+    "labels": ["technology", "history"]
+  },
+  {
+    "question": "How many feet tall is the Statue of Liberty (from ground to torch)?",
+    "answer": 305,
+    "labels": ["geography", "landmarks"]
+  },
+  {
+    "question": "How many episodes of Breaking Bad were produced in total?",
+    "answer": 62,
+    "labels": ["entertainment", "tv-shows"]
+  },
+  {
+    "question": "What is the population of Iceland (in thousands)?",
+    "answer": 380,
+    "labels": ["geography", "population"]
+  },
+  {
+    "question": "How many keys are on a standard piano?",
+    "answer": 88,
+    "labels": ["music", "general"]
+  },
+  {
+    "question": "What year did World War II end?",
+    "answer": 1945,
+    "labels": ["history", "war"]
+  },
+  {
+    "question": "How many bones are in an adult human body?",
+    "answer": 206,
+    "labels": ["science", "anatomy"]
+  },
+  {
+    "question": "What is the speed of light in miles per second (rounded)?",
+    "answer": 186282,
+    "labels": ["science", "physics"]
+  },
+  {
+    "question": "How many stripes are on the American flag?",
+    "answer": 13,
+    "labels": ["history", "general"]
+  },
+  {
+    "question": "What year was Netflix founded?",
+    "answer": 1997,
+    "labels": ["technology", "entertainment"]
+  },
+  {
+    "question": "How many hearts does an octopus have?",
+    "answer": 3,
+    "labels": ["science", "animals"]
+  },
+  {
+    "question": "What is the length of the Great Wall of China in miles?",
+    "answer": 13171,
+    "labels": ["geography", "landmarks"]
+  },
+  {
+    "question": "How many squares are on a chess board?",
+    "answer": 64,
+    "labels": ["games", "general"]
+  },
+  {
+    "question": "What year did the Berlin Wall fall?",
+    "answer": 1989,
+    "labels": ["history", "war"]
+  },
+  {
+    "question": "How many players are on a soccer team on the field?",
+    "answer": 11,
+    "labels": ["sports", "general"]
+  },
+  {
+    "question": "What is the boiling point of water in Fahrenheit?",
+    "answer": 212,
+    "labels": ["science", "general"]
+  },
+  {
+    "question": "How many Olympic rings are there?",
+    "answer": 5,
+    "labels": ["sports", "olympics"]
+  },
+  {
+    "question": "What year was the first email sent?",
+    "answer": 1971,
+    "labels": ["technology", "history"]
+  },
+  {
+    "question": "How many time zones does Russia have?",
+    "answer": 11,
+    "labels": ["geography", "general"]
+  },
+  {
+    "question": "What is the diameter of Earth in miles (rounded)?",
+    "answer": 7918,
+    "labels": ["science", "geography"]
+  }
+]

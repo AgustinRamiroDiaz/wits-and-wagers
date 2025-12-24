@@ -1,65 +1,670 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect } from 'react';
+import { Question, Player, PlayerAnswer, PlayerBet, GamePhase } from './types';
 
 export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+  const [allQuestions, setAllQuestions] = useState<Question[]>([]);
+  const [availableLabels, setAvailableLabels] = useState<string[]>([]);
+  const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
+  const [filteredQuestions, setFilteredQuestions] = useState<Question[]>([]);
+
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [newPlayerName, setNewPlayerName] = useState('');
+
+  const [gamePhase, setGamePhase] = useState<GamePhase>('setup');
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [gameQuestions, setGameQuestions] = useState<Question[]>([]);
+  const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
+
+  const [playerAnswers, setPlayerAnswers] = useState<PlayerAnswer[]>([]);
+  const [playerBets, setPlayerBets] = useState<PlayerBet[]>([]);
+  const [currentPlayerAnswerInput, setCurrentPlayerAnswerInput] = useState<Record<string, string>>({});
+
+  const [roundsToPlay, setRoundsToPlay] = useState(7);
+
+  useEffect(() => {
+    fetch('/questions.json')
+      .then(res => res.json())
+      .then((data: Question[]) => {
+        setAllQuestions(data);
+        const labels = Array.from(new Set(data.flatMap(q => q.labels))).sort();
+        setAvailableLabels(labels);
+        setFilteredQuestions(data);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (selectedLabels.length === 0) {
+      setFilteredQuestions(allQuestions);
+    } else {
+      setFilteredQuestions(
+        allQuestions.filter(q =>
+          q.labels.some(label => selectedLabels.includes(label))
+        )
+      );
+    }
+  }, [selectedLabels, allQuestions]);
+
+  const addPlayer = () => {
+    if (newPlayerName.trim()) {
+      const newPlayer: Player = {
+        id: Date.now().toString(),
+        name: newPlayerName.trim(),
+        score: 0,
+      };
+      setPlayers([...players, newPlayer]);
+      setNewPlayerName('');
+    }
+  };
+
+  const removePlayer = (id: string) => {
+    setPlayers(players.filter(p => p.id !== id));
+  };
+
+  const toggleLabel = (label: string) => {
+    setSelectedLabels(prev =>
+      prev.includes(label)
+        ? prev.filter(l => l !== label)
+        : [...prev, label]
+    );
+  };
+
+  const startGame = () => {
+    if (filteredQuestions.length === 0) {
+      alert('No questions available with selected labels!');
+      return;
+    }
+
+    const shuffled = [...filteredQuestions].sort(() => Math.random() - 0.5);
+    const selected = shuffled.slice(0, roundsToPlay);
+    setGameQuestions(selected);
+    setCurrentQuestionIndex(0);
+    setCurrentQuestion(selected[0]);
+    setGamePhase('answering');
+  };
+
+  const submitAnswer = (playerId: string, answer: number) => {
+    setPlayerAnswers(prev => {
+      const filtered = prev.filter(a => a.playerId !== playerId);
+      return [...filtered, { playerId, answer }];
+    });
+  };
+
+  const finishAnswering = () => {
+    if (playerAnswers.length < players.length) {
+      alert('All players must submit an answer!');
+      return;
+    }
+    setGamePhase('betting');
+  };
+
+  const submitBet = (playerId: string, betOnAnswerIndex: number) => {
+    setPlayerBets(prev => {
+      const filtered = prev.filter(b => b.playerId !== playerId);
+      return [...filtered, { playerId, betOnAnswerIndex }];
+    });
+  };
+
+  const finishBetting = () => {
+    if (playerBets.length < players.length) {
+      alert('All players must place a bet!');
+      return;
+    }
+    calculateScores();
+    setGamePhase('results');
+  };
+
+  const calculateScores = () => {
+    if (!currentQuestion) return;
+
+    const sortedAnswers = [...playerAnswers].sort((a, b) => a.answer - b.answer);
+
+    const validAnswers = sortedAnswers.filter(a => a.answer <= currentQuestion.answer);
+    const winningAnswer = validAnswers.length > 0
+      ? validAnswers[validAnswers.length - 1]
+      : sortedAnswers[0];
+
+    const winningIndex = sortedAnswers.findIndex(
+      a => a.playerId === winningAnswer.playerId && a.answer === winningAnswer.answer
+    );
+
+    setPlayers(prev => prev.map(player => {
+      let pointsEarned = 0;
+
+      const playerAnswer = playerAnswers.find(a => a.playerId === player.id);
+      if (playerAnswer?.answer === winningAnswer.answer) {
+        pointsEarned += 3;
+      }
+
+      const playerBet = playerBets.find(b => b.playerId === player.id);
+      if (playerBet && playerBet.betOnAnswerIndex === winningIndex) {
+        pointsEarned += 2;
+      }
+
+      return {
+        ...player,
+        score: player.score + pointsEarned,
+      };
+    }));
+  };
+
+  const nextQuestion = () => {
+    const nextIndex = currentQuestionIndex + 1;
+    if (nextIndex >= gameQuestions.length) {
+      setGamePhase('game-over');
+    } else {
+      setCurrentQuestionIndex(nextIndex);
+      setCurrentQuestion(gameQuestions[nextIndex]);
+      setPlayerAnswers([]);
+      setPlayerBets([]);
+      setCurrentPlayerAnswerInput({});
+      setGamePhase('answering');
+    }
+  };
+
+  const resetGame = () => {
+    setPlayers(prev => prev.map(p => ({ ...p, score: 0 })));
+    setCurrentQuestionIndex(0);
+    setPlayerAnswers([]);
+    setPlayerBets([]);
+    setCurrentPlayerAnswerInput({});
+    setGamePhase('setup');
+  };
+
+  const getWinningAnswerInfo = () => {
+    if (!currentQuestion || playerAnswers.length === 0) return null;
+
+    const sortedAnswers = [...playerAnswers].sort((a, b) => a.answer - b.answer);
+    const validAnswers = sortedAnswers.filter(a => a.answer <= currentQuestion.answer);
+    const winningAnswer = validAnswers.length > 0
+      ? validAnswers[validAnswers.length - 1]
+      : sortedAnswers[0];
+
+    const winningIndex = sortedAnswers.findIndex(
+      a => a.playerId === winningAnswer.playerId && a.answer === winningAnswer.answer
+    );
+
+    return { winningAnswer, winningIndex, sortedAnswers };
+  };
+
+  if (gamePhase === 'setup') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 p-8">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-5xl font-bold text-center mb-8 text-indigo-900 dark:text-indigo-300">
+            Wits and Wagers
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
+            <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">
+              Add Players
+            </h2>
+            <div className="flex gap-2 mb-4">
+              <input
+                type="text"
+                value={newPlayerName}
+                onChange={(e) => setNewPlayerName(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && addPlayer()}
+                placeholder="Enter player name"
+                className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white"
+              />
+              <button
+                onClick={addPlayer}
+                className="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
+              >
+                Add
+              </button>
+            </div>
+
+            {players.length > 0 && (
+              <div className="space-y-2">
+                {players.map((player) => (
+                  <div
+                    key={player.id}
+                    className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                  >
+                    <span className="font-medium text-gray-800 dark:text-gray-100">
+                      {player.name}
+                    </span>
+                    <button
+                      onClick={() => removePlayer(player.id)}
+                      className="px-3 py-1 text-sm bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {players.length >= 2 && (
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+              <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-100">
+                Game Settings
+              </h2>
+
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Number of Rounds: {roundsToPlay}
+                </label>
+                <input
+                  type="range"
+                  min="3"
+                  max="15"
+                  value={roundsToPlay}
+                  onChange={(e) => setRoundsToPlay(parseInt(e.target.value))}
+                  className="w-full"
+                />
+              </div>
+
+              <h3 className="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-100">
+                Filter Questions by Labels
+              </h3>
+              <div className="flex flex-wrap gap-2 mb-4">
+                {availableLabels.map((label) => (
+                  <button
+                    key={label}
+                    onClick={() => toggleLabel(label)}
+                    className={`px-4 py-2 rounded-full font-medium transition-colors ${
+                      selectedLabels.includes(label)
+                        ? 'bg-indigo-600 text-white'
+                        : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+                {filteredQuestions.length} questions available
+                {selectedLabels.length > 0 && ' with selected labels'}
+              </p>
+
+              <button
+                onClick={startGame}
+                disabled={players.length < 2 || filteredQuestions.length === 0}
+                className="w-full px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-bold text-lg"
+              >
+                Start Game
+              </button>
+            </div>
+          )}
+
+          {players.length < 2 && (
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 text-center">
+              <p className="text-yellow-800 dark:text-yellow-200">
+                Add at least 2 players to start the game
+              </p>
+            </div>
+          )}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      </div>
+    );
+  }
+
+  if (gamePhase === 'answering') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 dark:from-gray-900 dark:to-gray-800 p-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-purple-900 dark:text-purple-300">
+              Round {currentQuestionIndex + 1} of {gameQuestions.length}
+            </h2>
+            <div className="text-lg font-semibold text-purple-800 dark:text-purple-400">
+              Answering Phase
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 mb-6">
+            <h3 className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">
+              {currentQuestion?.question}
+            </h3>
+
+            <div className="space-y-4">
+              {players.map((player) => {
+                const hasAnswered = playerAnswers.some(a => a.playerId === player.id);
+                return (
+                  <div
+                    key={player.id}
+                    className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                  >
+                    <div className="flex-1">
+                      <div className="font-semibold text-gray-800 dark:text-gray-100 mb-1">
+                        {player.name}
+                      </div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                        Score: {player.score}
+                      </div>
+                    </div>
+                    {!hasAnswered ? (
+                      <>
+                        <input
+                          type="number"
+                          value={currentPlayerAnswerInput[player.id] || ''}
+                          onChange={(e) =>
+                            setCurrentPlayerAnswerInput(prev => ({
+                              ...prev,
+                              [player.id]: e.target.value,
+                            }))
+                          }
+                          placeholder="Your answer"
+                          className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg w-32 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-600 dark:text-white"
+                        />
+                        <button
+                          onClick={() => {
+                            const value = parseFloat(currentPlayerAnswerInput[player.id] || '0');
+                            if (!isNaN(value) && value >= 0) {
+                              submitAnswer(player.id, value);
+                            }
+                          }}
+                          className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
+                        >
+                          Submit
+                        </button>
+                      </>
+                    ) : (
+                      <div className="px-4 py-2 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-lg font-medium">
+                        Answer Submitted
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <button
+            onClick={finishAnswering}
+            disabled={playerAnswers.length < players.length}
+            className="w-full px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-bold text-lg"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            Continue to Betting ({playerAnswers.length}/{players.length} answered)
+          </button>
         </div>
-      </main>
-    </div>
-  );
+      </div>
+    );
+  }
+
+  if (gamePhase === 'betting') {
+    const sortedAnswers = [...playerAnswers].sort((a, b) => a.answer - b.answer);
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 dark:from-gray-900 dark:to-gray-800 p-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-green-900 dark:text-green-300">
+              Round {currentQuestionIndex + 1} of {gameQuestions.length}
+            </h2>
+            <div className="text-lg font-semibold text-green-800 dark:text-green-400">
+              Betting Phase
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 mb-6">
+            <h3 className="text-2xl font-bold text-center mb-6 text-gray-800 dark:text-gray-100">
+              {currentQuestion?.question}
+            </h3>
+
+            <div className="mb-8">
+              <h4 className="text-lg font-semibold mb-4 text-gray-700 dark:text-gray-300">
+                All Answers (sorted):
+              </h4>
+              <div className="grid gap-3">
+                {sortedAnswers.map((answer, index) => {
+                  const player = players.find(p => p.id === answer.playerId);
+                  return (
+                    <div
+                      key={`${answer.playerId}-${index}`}
+                      className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg border-2 border-gray-200 dark:border-gray-600"
+                    >
+                      <div>
+                        <div className="font-semibold text-gray-800 dark:text-gray-100">
+                          {player?.name}
+                        </div>
+                        <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                          {answer.answer}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
+                Place Your Bets:
+              </h4>
+              {players.map((player) => {
+                const hasBet = playerBets.some(b => b.playerId === player.id);
+                return (
+                  <div
+                    key={player.id}
+                    className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                  >
+                    <div className="font-semibold text-gray-800 dark:text-gray-100 mb-3">
+                      {player.name} - Choose which answer to bet on:
+                    </div>
+                    {!hasBet ? (
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                        {sortedAnswers.map((answer, index) => {
+                          const answerPlayer = players.find(p => p.id === answer.playerId);
+                          return (
+                            <button
+                              key={`${answer.playerId}-${index}`}
+                              onClick={() => submitBet(player.id, index)}
+                              className="px-4 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
+                            >
+                              {answerPlayer?.name}: {answer.answer}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div className="px-4 py-2 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-lg font-medium inline-block">
+                        Bet Placed
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <button
+            onClick={finishBetting}
+            disabled={playerBets.length < players.length}
+            className="w-full px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-bold text-lg"
+          >
+            Show Results ({playerBets.length}/{players.length} bets placed)
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (gamePhase === 'results') {
+    const winInfo = getWinningAnswerInfo();
+    if (!winInfo || !currentQuestion) return null;
+
+    const { winningAnswer, winningIndex, sortedAnswers } = winInfo;
+    const winningPlayer = players.find(p => p.id === winningAnswer.playerId);
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-orange-100 dark:from-gray-900 dark:to-gray-800 p-8">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-6 text-orange-900 dark:text-orange-300">
+            Round {currentQuestionIndex + 1} Results
+          </h2>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 mb-6">
+            <h3 className="text-2xl font-bold text-center mb-4 text-gray-800 dark:text-gray-100">
+              {currentQuestion.question}
+            </h3>
+            <div className="text-center mb-8">
+              <div className="text-lg text-gray-600 dark:text-gray-400 mb-2">
+                Correct Answer:
+              </div>
+              <div className="text-5xl font-bold text-green-600 dark:text-green-400">
+                {currentQuestion.answer}
+              </div>
+            </div>
+
+            <div className="mb-8">
+              <h4 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300">
+                Winning Answer:
+              </h4>
+              <div className="p-6 bg-gradient-to-r from-yellow-100 to-yellow-200 dark:from-yellow-900 dark:to-yellow-800 rounded-lg border-4 border-yellow-400 dark:border-yellow-600">
+                <div className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+                  {winningPlayer?.name}
+                </div>
+                <div className="text-4xl font-bold text-yellow-900 dark:text-yellow-200">
+                  {winningAnswer.answer}
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-8">
+              <h4 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300">
+                All Answers:
+              </h4>
+              <div className="space-y-2">
+                {sortedAnswers.map((answer, index) => {
+                  const player = players.find(p => p.id === answer.playerId);
+                  const isWinning = index === winningIndex;
+                  return (
+                    <div
+                      key={`${answer.playerId}-${index}`}
+                      className={`p-4 rounded-lg ${
+                        isWinning
+                          ? 'bg-yellow-100 dark:bg-yellow-900 border-2 border-yellow-400 dark:border-yellow-600'
+                          : 'bg-gray-50 dark:bg-gray-700'
+                      }`}
+                    >
+                      <div className="flex justify-between items-center">
+                        <div>
+                          <div className="font-semibold text-gray-800 dark:text-gray-100">
+                            {player?.name}
+                          </div>
+                          <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                            {answer.answer}
+                          </div>
+                        </div>
+                        {isWinning && (
+                          <div className="text-yellow-600 dark:text-yellow-400 font-bold">
+                            WINNER
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300">
+                Current Scores:
+              </h4>
+              <div className="space-y-2">
+                {[...players]
+                  .sort((a, b) => b.score - a.score)
+                  .map((player) => (
+                    <div
+                      key={player.id}
+                      className="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                    >
+                      <div className="font-semibold text-gray-800 dark:text-gray-100">
+                        {player.name}
+                      </div>
+                      <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                        {player.score} pts
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          </div>
+
+          <button
+            onClick={nextQuestion}
+            className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-bold text-lg"
+          >
+            {currentQuestionIndex + 1 >= gameQuestions.length ? 'View Final Results' : 'Next Question'}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (gamePhase === 'game-over') {
+    const winner = [...players].sort((a, b) => b.score - a.score)[0];
+
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-100 dark:from-gray-900 dark:to-gray-800 p-8">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-5xl font-bold text-center mb-8 text-indigo-900 dark:text-indigo-300">
+            Game Over!
+          </h2>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 mb-6">
+            <div className="text-center mb-8">
+              <div className="text-6xl mb-4">
+                {winner && '🏆'}
+              </div>
+              <h3 className="text-4xl font-bold text-gray-800 dark:text-gray-100 mb-2">
+                {winner?.name} Wins!
+              </h3>
+              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
+                {winner?.score} points
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-2xl font-semibold mb-4 text-center text-gray-700 dark:text-gray-300">
+                Final Scores
+              </h4>
+              <div className="space-y-3">
+                {[...players]
+                  .sort((a, b) => b.score - a.score)
+                  .map((player, index) => (
+                    <div
+                      key={player.id}
+                      className={`flex justify-between items-center p-5 rounded-lg ${
+                        index === 0
+                          ? 'bg-gradient-to-r from-yellow-100 to-yellow-200 dark:from-yellow-900 dark:to-yellow-800 border-2 border-yellow-400 dark:border-yellow-600'
+                          : 'bg-gray-50 dark:bg-gray-700'
+                      }`}
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="text-3xl font-bold text-gray-600 dark:text-gray-400">
+                          #{index + 1}
+                        </div>
+                        <div className="font-semibold text-xl text-gray-800 dark:text-gray-100">
+                          {player.name}
+                        </div>
+                      </div>
+                      <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400">
+                        {player.score}
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            </div>
+          </div>
+
+          <button
+            onClick={resetGame}
+            className="w-full px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-bold text-lg"
+          >
+            Play Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
 }
