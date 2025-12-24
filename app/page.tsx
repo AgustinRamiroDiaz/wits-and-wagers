@@ -199,14 +199,76 @@ export default function Home() {
     setGamePhase('setup');
   };
 
-  const restartRound = () => {
-    if (confirm('¿Estás seguro de que quieres reiniciar la ronda actual?')) {
-      setPlayerAnswers([]);
-      setPlayerBets([]);
-      setCurrentPlayerAnswerInput({});
-      setGamePhase('answering');
+  const refreshQuestion = () => {
+    const availableQuestions = filteredQuestions.filter(
+      q => !gameQuestions.some(gq => gq.question === q.question)
+    );
+
+    if (availableQuestions.length === 0) {
+      alert('¡No hay más preguntas disponibles con los filtros actuales!');
+      return;
     }
+
+    const newQuestion = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+
+    setGameQuestions(prev => {
+      const updated = [...prev];
+      updated[currentQuestionIndex] = newQuestion;
+      return updated;
+    });
+    setCurrentQuestion(newQuestion);
+    setPlayerAnswers([]);
+    setPlayerBets([]);
+    setCurrentPlayerAnswerInput({});
+    setGamePhase('answering');
   };
+
+  const deleteQuestion = () => {
+    if (!currentQuestion) return;
+
+    if (!confirm('¿Estás seguro de que quieres eliminar esta pregunta permanentemente?')) {
+      return;
+    }
+
+    setAllQuestions(prev => prev.filter(q => q.question !== currentQuestion.question));
+    setFilteredQuestions(prev => prev.filter(q => q.question !== currentQuestion.question));
+
+    const remainingGameQuestions = gameQuestions.filter(
+      q => q.question !== currentQuestion.question
+    );
+
+    if (remainingGameQuestions.length === 0) {
+      alert('No quedan más preguntas. Volviendo al menú principal.');
+      resetGame();
+      return;
+    }
+
+    setGameQuestions(remainingGameQuestions);
+
+    const availableQuestions = filteredQuestions.filter(
+      q => q.question !== currentQuestion.question &&
+          !remainingGameQuestions.some(gq => gq.question === q.question)
+    );
+
+    if (availableQuestions.length > 0) {
+      const newQuestion = availableQuestions[Math.floor(Math.random() * availableQuestions.length)];
+      remainingGameQuestions.splice(currentQuestionIndex, 0, newQuestion);
+      setGameQuestions(remainingGameQuestions);
+      setCurrentQuestion(newQuestion);
+    } else {
+      const adjustedIndex = currentQuestionIndex >= remainingGameQuestions.length
+        ? remainingGameQuestions.length - 1
+        : currentQuestionIndex;
+      setCurrentQuestionIndex(adjustedIndex);
+      setCurrentQuestion(remainingGameQuestions[adjustedIndex]);
+    }
+
+    setPlayerAnswers([]);
+    setPlayerBets([]);
+    setCurrentPlayerAnswerInput({});
+    setGamePhase('answering');
+  };
+
 
   const getWinningAnswerInfo = () => {
     if (!currentQuestion || playerAnswers.length === 0) return null;
@@ -353,10 +415,18 @@ export default function Home() {
                 Fase de Respuestas
               </div>
               <button
-                onClick={restartRound}
-                className="px-3 py-1 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm font-medium"
+                onClick={refreshQuestion}
+                className="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                title="Cambiar a otra pregunta"
               >
-                Reiniciar Ronda
+                🔄 Cambiar Pregunta
+              </button>
+              <button
+                onClick={deleteQuestion}
+                className="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+                title="Eliminar esta pregunta permanentemente"
+              >
+                🗑️ Eliminar
               </button>
             </div>
           </div>
@@ -446,10 +516,18 @@ export default function Home() {
                 Fase de Apuestas
               </div>
               <button
-                onClick={restartRound}
-                className="px-3 py-1 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm font-medium"
+                onClick={refreshQuestion}
+                className="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                title="Cambiar a otra pregunta"
               >
-                Reiniciar Ronda
+                🔄 Cambiar Pregunta
+              </button>
+              <button
+                onClick={deleteQuestion}
+                className="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-medium"
+                title="Eliminar esta pregunta permanentemente"
+              >
+                🗑️ Eliminar
               </button>
             </div>
           </div>
