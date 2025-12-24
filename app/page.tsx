@@ -451,7 +451,10 @@ export default function Home() {
 
             <div className="space-y-4">
               {players.map((player) => {
-                const hasAnswered = playerAnswers.some(a => a.playerId === player.id);
+                const playerAnswer = playerAnswers.find(a => a.playerId === player.id);
+                const inputValue = currentPlayerAnswerInput[player.id] || '';
+                const hasValue = inputValue.trim() !== '';
+
                 return (
                   <div
                     key={player.id}
@@ -465,35 +468,33 @@ export default function Home() {
                         Puntaje: {player.score}
                       </div>
                     </div>
-                    {!hasAnswered ? (
-                      <>
-                        <input
-                          type="number"
-                          value={currentPlayerAnswerInput[player.id] || ''}
-                          onChange={(e) =>
-                            setCurrentPlayerAnswerInput(prev => ({
-                              ...prev,
-                              [player.id]: e.target.value,
-                            }))
-                          }
-                          placeholder="Tu respuesta"
-                          className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg w-32 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-600 dark:text-white"
-                        />
-                        <button
-                          onClick={() => {
-                            const value = parseFloat(currentPlayerAnswerInput[player.id] || '0');
-                            if (!isNaN(value) && value >= 0) {
-                              submitAnswer(player.id, value);
-                            }
-                          }}
-                          className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium"
-                        >
-                          Enviar
-                        </button>
-                      </>
-                    ) : (
-                      <div className="px-4 py-2 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-lg font-medium">
-                        Respuesta Enviada
+                    <input
+                      type="number"
+                      value={inputValue}
+                      onChange={(e) => {
+                        const newValue = e.target.value;
+                        setCurrentPlayerAnswerInput(prev => ({
+                          ...prev,
+                          [player.id]: newValue,
+                        }));
+
+                        const numValue = parseFloat(newValue);
+                        if (!isNaN(numValue) && numValue >= 0) {
+                          submitAnswer(player.id, numValue);
+                        } else if (newValue === '') {
+                          setPlayerAnswers(prev => prev.filter(a => a.playerId !== player.id));
+                        }
+                      }}
+                      placeholder="Tu respuesta"
+                      className={`px-4 py-2 border rounded-lg w-32 focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-600 dark:text-white ${
+                        hasValue
+                          ? 'border-green-500 dark:border-green-600'
+                          : 'border-gray-300 dark:border-gray-600'
+                      }`}
+                    />
+                    {hasValue && playerAnswer && (
+                      <div className="text-green-600 dark:text-green-400 font-medium text-sm">
+                        ✓
                       </div>
                     )}
                   </div>
