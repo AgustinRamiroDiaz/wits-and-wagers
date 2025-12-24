@@ -101,14 +101,32 @@ export default function Home() {
 
   const submitBet = (playerId: string, betOnAnswerIndex: number) => {
     setPlayerBets(prev => {
-      const filtered = prev.filter(b => b.playerId !== playerId);
-      return [...filtered, { playerId, betOnAnswerIndex }];
+      const existingBet = prev.find(b => b.playerId === playerId);
+
+      if (existingBet) {
+        if (existingBet.betOnAnswerIndices.includes(betOnAnswerIndex)) {
+          return prev.map(b =>
+            b.playerId === playerId
+              ? { ...b, betOnAnswerIndices: b.betOnAnswerIndices.filter(i => i !== betOnAnswerIndex) }
+              : b
+          );
+        } else if (existingBet.betOnAnswerIndices.length < 2) {
+          return prev.map(b =>
+            b.playerId === playerId
+              ? { ...b, betOnAnswerIndices: [...b.betOnAnswerIndices, betOnAnswerIndex] }
+              : b
+          );
+        }
+        return prev;
+      } else {
+        return [...prev, { playerId, betOnAnswerIndices: [betOnAnswerIndex] }];
+      }
     });
   };
 
   const finishBetting = () => {
-    if (playerBets.length < players.length) {
-      alert('All players must place a bet!');
+    if (playerBets.length < players.length || playerBets.some(b => b.betOnAnswerIndices.length < 2)) {
+      alert('All players must place 2 bets!');
       return;
     }
     calculateScores();
@@ -138,8 +156,11 @@ export default function Home() {
       }
 
       const playerBet = playerBets.find(b => b.playerId === player.id);
-      if (playerBet && playerBet.betOnAnswerIndex === winningIndex) {
-        pointsEarned += 2;
+      if (playerBet) {
+        const winningBetsCount = playerBet.betOnAnswerIndices.filter(
+          index => index === winningIndex
+        ).length;
+        pointsEarned += winningBetsCount * 2;
       }
 
       return {
@@ -435,38 +456,67 @@ export default function Home() {
 
             <div className="space-y-4">
               <h4 className="text-lg font-semibold text-gray-700 dark:text-gray-300">
-                Place Your Bets:
+                Place Your Bets (2 chips per player):
               </h4>
               {players.map((player) => {
-                const hasBet = playerBets.some(b => b.playerId === player.id);
+                const playerBet = playerBets.find(b => b.playerId === player.id);
+                const betsPlaced = playerBet?.betOnAnswerIndices.length || 0;
+                const chipsRemaining = 2 - betsPlaced;
+
                 return (
                   <div
                     key={player.id}
                     className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
                   >
-                    <div className="font-semibold text-gray-800 dark:text-gray-100 mb-3">
-                      {player.name} - Choose which answer to bet on:
+                    <div className="flex justify-between items-center mb-3">
+                      <div className="font-semibold text-gray-800 dark:text-gray-100">
+                        {player.name}
+                      </div>
+                      <div className="flex gap-1">
+                        {[...Array(2)].map((_, i) => (
+                          <div
+                            key={i}
+                            className={`w-8 h-8 rounded-full flex items-center justify-center font-bold ${
+                              i < betsPlaced
+                                ? 'bg-green-500 text-white'
+                                : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400'
+                            }`}
+                          >
+                            {i < betsPlaced ? '✓' : (i + 1)}
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    {!hasBet ? (
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                        {sortedAnswers.map((answer, index) => {
-                          const answerPlayer = players.find(p => p.id === answer.playerId);
-                          return (
-                            <button
-                              key={`${answer.playerId}-${index}`}
-                              onClick={() => submitBet(player.id, index)}
-                              className="px-4 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium"
-                            >
-                              {answerPlayer?.name}: {answer.answer}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    ) : (
-                      <div className="px-4 py-2 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-lg font-medium inline-block">
-                        Bet Placed
-                      </div>
-                    )}
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                      {sortedAnswers.map((answer, index) => {
+                        const answerPlayer = players.find(p => p.id === answer.playerId);
+                        const isBetOn = playerBet?.betOnAnswerIndices.includes(index) || false;
+                        const canBet = chipsRemaining > 0 || isBetOn;
+
+                        return (
+                          <button
+                            key={`${answer.playerId}-${index}`}
+                            onClick={() => submitBet(player.id, index)}
+                            disabled={!canBet}
+                            className={`px-4 py-3 rounded-lg transition-colors font-medium relative ${
+                              isBetOn
+                                ? 'bg-green-600 text-white ring-2 ring-green-400'
+                                : canBet
+                                ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                                : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                            }`}
+                          >
+                            <div>{answerPlayer?.name}</div>
+                            <div className="text-xl font-bold">{answer.answer}</div>
+                            {isBetOn && (
+                              <div className="absolute top-1 right-1 w-6 h-6 bg-white text-green-600 rounded-full flex items-center justify-center text-xs font-bold">
+                                ✓
+                              </div>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 );
               })}
@@ -475,10 +525,10 @@ export default function Home() {
 
           <button
             onClick={finishBetting}
-            disabled={playerBets.length < players.length}
+            disabled={playerBets.length < players.length || playerBets.some(b => b.betOnAnswerIndices.length < 2)}
             className="w-full px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors font-bold text-lg"
           >
-            Show Results ({playerBets.length}/{players.length} bets placed)
+            Show Results ({playerBets.reduce((sum, b) => sum + b.betOnAnswerIndices.length, 0)}/{players.length * 2} chips placed)
           </button>
         </div>
       </div>
@@ -557,6 +607,59 @@ export default function Home() {
                             WINNER
                           </div>
                         )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="mb-8">
+              <h4 className="text-xl font-semibold mb-4 text-gray-700 dark:text-gray-300">
+                Betting Results:
+              </h4>
+              <div className="space-y-3">
+                {players.map((player) => {
+                  const playerBet = playerBets.find(b => b.playerId === player.id);
+                  if (!playerBet) return null;
+
+                  return (
+                    <div
+                      key={player.id}
+                      className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                    >
+                      <div className="font-semibold text-gray-800 dark:text-gray-100 mb-2">
+                        {player.name}'s Bets:
+                      </div>
+                      <div className="grid grid-cols-2 gap-2">
+                        {playerBet.betOnAnswerIndices.map((betIndex, i) => {
+                          const betAnswer = sortedAnswers[betIndex];
+                          const betPlayer = players.find(p => p.id === betAnswer?.playerId);
+                          const isWinningBet = betIndex === winningIndex;
+
+                          return (
+                            <div
+                              key={i}
+                              className={`p-3 rounded-lg ${
+                                isWinningBet
+                                  ? 'bg-green-100 dark:bg-green-900 border-2 border-green-400 dark:border-green-600'
+                                  : 'bg-white dark:bg-gray-600'
+                              }`}
+                            >
+                              <div className="text-sm text-gray-600 dark:text-gray-400">
+                                Chip {i + 1}
+                              </div>
+                              <div className="font-medium text-gray-800 dark:text-gray-100">
+                                {betPlayer?.name}: {betAnswer?.answer}
+                              </div>
+                              {isWinningBet && (
+                                <div className="text-green-600 dark:text-green-400 font-bold text-sm mt-1">
+                                  +2 points!
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   );

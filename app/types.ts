@@ -17,7 +17,7 @@ export interface PlayerAnswer {
 
 export interface PlayerBet {
   playerId: string;
-  betOnAnswerIndex: number;
+  betOnAnswerIndices: number[];
 }
 
 export type GamePhase =

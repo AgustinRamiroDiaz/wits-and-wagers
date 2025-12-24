@@ -228,5 +228,135 @@
     "question": "¿Cuántos compases tiene una estructura básica de blues tradicional usada en piano?",
     "answer": 12,
     "labels": ["música", "piano"]
+  },
+  {
+    "question": "¿En qué año se fundó la Asociación del Fútbol Argentino (AFA)?",
+    "answer": 1893,
+    "labels": ["fútbol", "argentina"]
+  },
+  {
+    "question": "¿Cuántos equipos participan tradicionalmente en la Primera División del fútbol argentino (formato histórico clásico)?",
+    "answer": 20,
+    "labels": ["fútbol", "argentina"]
+  },
+  {
+    "question": "¿Cuántos campeonatos mundiales ganó la selección argentina de fútbol hasta 2022?",
+    "answer": 3,
+    "labels": ["fútbol", "argentina"]
+  },
+  {
+    "question": "¿Cuántas Copas América ganó la selección argentina hasta 2024?",
+    "answer": 16,
+    "labels": ["fútbol", "argentina"]
+  },
+  {
+    "question": "¿En qué año Argentina ganó su primer Mundial de fútbol?",
+    "answer": 1978,
+    "labels": ["fútbol", "argentina"]
+  },
+  {
+    "question": "¿En qué año Diego Maradona convirtió el famoso gol de la “Mano de Dios”?",
+    "answer": 1986,
+    "labels": ["fútbol", "argentina"]
+  },
+  {
+    "question": "¿Cuántos jugadores integran una lista oficial de convocados para un partido internacional según FIFA?",
+    "answer": 23,
+    "labels": ["fútbol", "argentina"]
+  },
+  {
+    "question": "¿Cuántos descensos por temporada hubo tradicionalmente en el fútbol argentino en torneos largos?",
+    "answer": 2,
+    "labels": ["fútbol", "argentina"]
+  },
+  {
+    "question": "¿Cuántos puntos otorga una victoria en el fútbol argentino moderno?",
+    "answer": 3,
+    "labels": ["fútbol", "argentina"]
+  },
+  {
+    "question": "¿En qué año se introdujo el sistema de promedios para el descenso en el fútbol argentino?",
+    "answer": 1983,
+    "labels": ["fútbol", "argentina"]
+  },
+  {
+    "question": "¿Cuántos clubes participaron en el primer campeonato de fútbol argentino en 1891?",
+    "answer": 5,
+    "labels": ["fútbol", "argentina", "historia"]
+  },
+  {
+    "question": "¿Cuántos metros mide el ancho máximo reglamentario de una cancha de fútbol profesional?",
+    "answer": 75,
+    "labels": ["fútbol"]
+  },
+  {
+    "question": "¿Cuántos títulos de Primera División ganó River Plate hasta 2024?",
+    "answer": 38,
+    "labels": ["fútbol", "argentina"]
+  },
+  {
+    "question": "¿Cuántos títulos de Primera División ganó Boca Juniors hasta 2024?",
+    "answer": 35,
+    "labels": ["fútbol", "argentina"]
+  },
+  {
+    "question": "¿Cuántos metros mide una pileta semiolímpica?",
+    "answer": 25,
+    "labels": ["natación"]
+  },
+  {
+    "question": "¿Cuántos estilos diferentes se combinan en una prueba de medley individual?",
+    "answer": 4,
+    "labels": ["natación"]
+  },
+  {
+    "question": "¿Cuántos metros totales se nadan en una prueba de 400 metros medley?",
+    "answer": 400,
+    "labels": ["natación"]
+  },
+  {
+    "question": "¿Cuántos largos se realizan en una pileta olímpica para completar 200 metros?",
+    "answer": 4,
+    "labels": ["natación"]
+  },
+  {
+    "question": "¿Cuántos largos se realizan en una pileta de 25 metros para completar 100 metros?",
+    "answer": 4,
+    "labels": ["natación"]
+  },
+  {
+    "question": "¿Cuántas vueltas completas de brazos se realizan por ciclo en el estilo mariposa?",
+    "answer": 1,
+    "labels": ["natación"]
+  },
+  {
+    "question": "¿Cuántas patadas de delfín están permitidas en la salida y en cada vuelta en pruebas oficiales?",
+    "answer": 1,
+    "labels": ["natación"]
+  },
+  {
+    "question": "¿Cuántos nadadores integran un equipo en una posta 4x100 metros?",
+    "answer": 4,
+    "labels": ["natación"]
+  },
+  {
+    "question": "¿Cuántos metros nada cada integrante en una posta 4x200 metros libres?",
+    "answer": 200,
+    "labels": ["natación"]
+  },
+  {
+    "question": "¿Cuántos carriles se utilizan en finales internacionales de natación en pileta olímpica?",
+    "answer": 8,
+    "labels": ["natación"]
+  },
+  {
+    "question": "¿Cuántos metros se recorren en una prueba olímpica de 1500 metros libres?",
+    "answer": 1500,
+    "labels": ["natación"]
+  },
+  {
+    "question": "¿Cuántos giros completos realiza un nadador al completar un largo con vuelta olímpica?",
+    "answer": 1,
+    "labels": ["natación"]
   }
 ]
