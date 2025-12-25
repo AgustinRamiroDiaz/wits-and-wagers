@@ -12,7 +12,8 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/questions.json')
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+    fetch(`${basePath}/questions.json`)
       .then(res => res.json())
       .then((data: Question[]) => {
         setAllQuestions(data);
