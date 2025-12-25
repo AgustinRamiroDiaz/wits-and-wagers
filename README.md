@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Wits & Wagers
+
+A digital implementation of the Wits & Wagers party game built with Next.js. Players answer trivia questions with numerical answers, then bet on whose answer they think is closest to the correct answer without going over.
+
+## 🎮 Play Online
+
+**[Play Wits & Wagers](https://yourusername.github.io/wits-and-wagers/)**
+
+## Game Rules
+
+1. **Setup**: Add 2-7 players to the game
+2. **Answering**: Each round, all players submit their numerical answer to a trivia question
+3. **Betting**: Players place bets on which answer they think is closest without going over
+4. **Scoring**: Points are awarded based on:
+   - Having the winning answer (closest without going over)
+   - Betting on the winning answer
+   - Round bonuses increase as the game progresses
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 20+
+- npm
+
+### Installation
+
+```bash
+npm install
+```
+
+### Development
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to play.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Build for Production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+```
 
-## Learn More
+## Testing
 
-To learn more about Next.js, take a look at the following resources:
+This project follows **Test-Driven Development (TDD)** with comprehensive test coverage.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Unit Tests (Vitest)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Tests for the core game logic:
 
-## Deploy on Vercel
+```bash
+npm test              # Run all unit tests
+npm test -- --watch   # Watch mode
+npm run test:coverage # With coverage report
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### End-to-End Tests (Playwright)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Full game flow tests:
+
+```bash
+npm run test:e2e      # Headless
+npm run test:e2e:ui   # With Playwright UI
+```
+
+## Architecture
+
+```
+lib/game-engine/
+├── core/           # Pure game logic (framework-agnostic)
+└── react/          # React hooks for state management
+
+app/                # Next.js UI layer
+
+e2e/                # Playwright end-to-end tests
+```
+
+## Deployment
+
+The app is automatically deployed to GitHub Pages on push to `main`. It's configured to run under the `/wits-and-wagers` base path.
+
+## License
+
+MIT
