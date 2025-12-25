@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { Question, Player, PlayerAnswer, PlayerBet, GamePhase } from './types';
+import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 
 export default function Home() {
   const [allQuestions, setAllQuestions] = useState<Question[]>([]);
@@ -11,6 +13,7 @@ export default function Home() {
 
   const [players, setPlayers] = useState<Player[]>([]);
   const [newPlayerName, setNewPlayerName] = useState('');
+  const [scoreHistory, setScoreHistory] = useState<Record<string, number[]>>({});
 
   const [gamePhase, setGamePhase] = useState<GamePhase>('setup');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -81,6 +84,13 @@ export default function Home() {
     setGameQuestions(selected);
     setCurrentQuestionIndex(0);
     setCurrentQuestion(selected[0]);
+
+    const initialHistory: Record<string, number[]> = {};
+    players.forEach(player => {
+      initialHistory[player.id] = [0];
+    });
+    setScoreHistory(initialHistory);
+
     setGamePhase('answering');
   };
 
@@ -178,6 +188,32 @@ export default function Home() {
         score: player.score + pointsEarned,
       };
     }));
+
+    setScoreHistory(prev => {
+      const updated = { ...prev };
+      players.forEach(player => {
+        const playerAnswer = playerAnswers.find(a => a.playerId === player.id);
+        const playerBet = playerBets.find(b => b.playerId === player.id);
+
+        let pointsEarned = 0;
+        if (playerAnswer?.answer === winningAnswer.answer) {
+          pointsEarned += 3;
+        }
+        if (playerBet) {
+          const winningBetsCount = playerBet.betOnAnswerIndices.filter(
+            index => index === winningIndex
+          ).length;
+          pointsEarned += winningBetsCount * 2;
+        }
+        if (pointsEarned > 0) {
+          pointsEarned += roundBonus;
+        }
+
+        const newScore = player.score + pointsEarned;
+        updated[player.id] = [...(prev[player.id] || []), newScore];
+      });
+      return updated;
+    });
   };
 
   const nextQuestion = () => {
@@ -202,6 +238,7 @@ export default function Home() {
     setCurrentPlayerAnswerInput({});
     setGameQuestions([]);
     setCurrentQuestion(null);
+    setScoreHistory({});
     setGamePhase('setup');
   };
 
@@ -290,6 +327,84 @@ export default function Home() {
     );
 
     return { winningAnswer, winningIndex, sortedAnswers };
+  };
+
+  const ScoreboardGraph = () => {
+    if (players.length === 0 || Object.keys(scoreHistory).length === 0) return null;
+
+    const playerColors = [
+      'hsl(0, 84%, 60%)',   // Red
+      'hsl(217, 91%, 60%)', // Blue
+      'hsl(142, 76%, 36%)', // Green
+      'hsl(38, 92%, 50%)',  // Orange
+      'hsl(262, 83%, 58%)', // Purple
+      'hsl(326, 78%, 57%)', // Pink
+      'hsl(174, 72%, 56%)', // Teal
+      'hsl(25, 95%, 53%)',  // Deep Orange
+      'hsl(239, 84%, 67%)', // Indigo
+      'hsl(74, 69%, 58%)',  // Lime
+    ];
+
+    // Transform data for recharts
+    const maxRounds = Math.max(...Object.values(scoreHistory).map(h => h.length));
+    const chartData = Array.from({ length: maxRounds }, (_, roundIndex) => {
+      const dataPoint: any = { round: `R${roundIndex + 1}` };
+      players.forEach(player => {
+        const history = scoreHistory[player.id] || [];
+        dataPoint[player.id] = history[roundIndex] ?? null;
+      });
+      return dataPoint;
+    });
+
+    // Create chart config
+    const chartConfig: any = {};
+    players.forEach((player, index) => {
+      chartConfig[player.id] = {
+        label: player.name,
+        color: playerColors[index % playerColors.length],
+      };
+    });
+
+    return (
+      <div className="mt-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+        <h4 className="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-100 text-center">
+          Progresión de Puntajes
+        </h4>
+
+        <ChartContainer config={chartConfig} className="h-[300px] w-full">
+          <LineChart data={chartData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
+            <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+            <XAxis
+              dataKey="round"
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              className="text-xs"
+            />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              className="text-xs"
+            />
+            <ChartTooltip content={<ChartTooltipContent />} />
+            <ChartLegend content={<ChartLegendContent />} />
+            {players.map((player) => (
+              <Line
+                key={player.id}
+                type="monotone"
+                dataKey={player.id}
+                stroke={`var(--color-${player.id})`}
+                strokeWidth={2}
+                dot={{ r: 4 }}
+                activeDot={{ r: 6 }}
+                connectNulls
+              />
+            ))}
+          </LineChart>
+        </ChartContainer>
+      </div>
+    );
   };
 
   if (gamePhase === 'setup') {
@@ -510,6 +625,8 @@ export default function Home() {
           >
             Continuar a Apuestas ({playerAnswers.length}/{players.length} respondieron)
           </button>
+
+          <ScoreboardGraph />
         </div>
       </div>
     );
@@ -680,6 +797,8 @@ export default function Home() {
           >
             Ver Resultados ({playerBets.reduce((sum, b) => sum + b.betOnAnswerIndices.length, 0)}/{players.length * 2} fichas colocadas)
           </button>
+
+          <ScoreboardGraph />
         </div>
       </div>
     );
@@ -854,6 +973,8 @@ export default function Home() {
           >
             {currentQuestionIndex + 1 >= gameQuestions.length ? 'Ver Resultados Finales' : 'Siguiente Pregunta'}
           </button>
+
+          <ScoreboardGraph />
         </div>
       </div>
     );
