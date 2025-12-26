@@ -91,8 +91,12 @@ export function useGame(initialQuestions: Question[] = []) {
       },
 
       // Betting phase
-      placeBet: (playerId: string, answerIndex: number) => {
-        engine.placeBet(playerId, answerIndex);
+      getBettingBoard: () => {
+        return engine.getBettingBoard();
+      },
+
+      placeBet: (playerId: string, slotIndex: number) => {
+        engine.placeBet(playerId, slotIndex);
         triggerUpdate();
       },
 

@@ -29,6 +29,18 @@ export default function Home() {
   const [newPlayerName, setNewPlayerName] = useState('');
   const [currentPlayerAnswerInput, setCurrentPlayerAnswerInput] = useState<Record<string, string>>({});
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
+  const [activeBettingPlayer, setActiveBettingPlayer] = useState<string | null>(null);
+
+  // Auto-select next player who needs to bet when entering betting phase
+  useEffect(() => {
+    if (phase === 'betting') {
+      const nextPlayer = players.find(p => {
+        const bet = state.playerBets.find(b => b.playerId === p.id);
+        return !bet || bet.betOnSlotIndices.length < 2;
+      });
+      setActiveBettingPlayer(nextPlayer?.id || null);
+    }
+  }, [phase, players, state.playerBets]);
 
   // Sync selected labels with game engine
   useEffect(() => {
@@ -325,7 +337,22 @@ export default function Home() {
 
   // Betting Phase
   if (phase === 'betting') {
-    const sortedAnswers = actions.getSortedAnswers();
+    const bettingBoard = actions.getBettingBoard();
+
+    // Get slot label display with answers
+    const getSlotDisplay = (slot: typeof bettingBoard[0]) => {
+      if (slot.isSpecial) {
+        return slot.label;
+      }
+      if (slot.answerGroups.length === 0) {
+        return null; // Empty slot
+      }
+      const answers = slot.answerGroups.map(g => {
+        const playerNames = g.playerIds.map(id => players.find(p => p.id === id)?.name).join(', ');
+        return `${g.answer} (${playerNames})`;
+      }).join(' | ');
+      return answers;
+    };
 
     return (
       <div className="container mx-auto p-4 max-w-4xl">
@@ -336,50 +363,147 @@ export default function Home() {
           <h2 className="text-2xl font-bold mt-2">{currentQuestion?.question}</h2>
         </div>
 
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <h3 className="text-xl font-semibold mb-4">Respuestas (ordenadas):</h3>
-          <div className="grid grid-cols-1 gap-3">
-            {sortedAnswers.map((answer, index) => {
-              const player = players.find(p => p.id === answer.playerId);
+        {/* Green Felt Betting Board */}
+        <div className="bg-emerald-800 rounded-xl shadow-2xl p-6 mb-6 border-4 border-amber-700">
+          <h3 className="text-xl font-bold mb-4 text-amber-200 text-center tracking-wide">
+            Mesa de Apuestas
+          </h3>
+          
+          <div className="space-y-2">
+            {bettingBoard.map((slot) => {
+              const slotDisplay = getSlotDisplay(slot);
+              const isClickable = slot.isSpecial || slot.answerGroups.length > 0;
+              const betsOnSlot = state.playerBets.filter(b => 
+                b.betOnSlotIndices.includes(slot.index)
+              );
+              
+              // Skip empty non-special slots
+              if (!slot.isSpecial && slot.answerGroups.length === 0) {
+                return null;
+              }
+
               return (
-                <div key={index} className="p-4 bg-gray-50 rounded-lg flex justify-between items-center">
-                  <span className="font-medium">
-                    {index + 1}. {player?.name}: <span className="text-blue-600 font-bold">{answer.answer}</span>
-                  </span>
+                <div
+                  key={slot.index}
+                  className={`
+                    relative p-4 rounded-lg border-2 transition-all
+                    ${slot.isSpecial 
+                      ? 'bg-red-900/60 border-red-700 hover:bg-red-900/80' 
+                      : 'bg-emerald-700/60 border-emerald-600 hover:bg-emerald-600/80'
+                    }
+                    ${isClickable ? 'cursor-pointer' : 'opacity-50 cursor-not-allowed'}
+                  `}
+                  onClick={() => {
+                    if (isClickable && activeBettingPlayer) {
+                      const currentBet = state.playerBets.find(b => b.playerId === activeBettingPlayer);
+                      if (!currentBet || currentBet.betOnSlotIndices.length < 2) {
+                        actions.placeBet(activeBettingPlayer, slot.index);
+                      }
+                    }
+                  }}
+                >
+                  <div className="flex justify-between items-center">
+                    <div className="flex-1">
+                      {/* Payout Label */}
+                      <div className={`
+                        inline-block px-3 py-1 rounded-full text-sm font-bold mb-2
+                        ${slot.isSpecial ? 'bg-red-600 text-white' : 'bg-amber-500 text-amber-900'}
+                      `}>
+                        {slot.label}
+                      </div>
+                      
+                      {/* Answers in this slot */}
+                      {slotDisplay && !slot.isSpecial && (
+                        <div className="text-white text-lg font-semibold">
+                          {slotDisplay}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Bet chips on this slot */}
+                    {betsOnSlot.length > 0 && (
+                      <div className="flex flex-wrap gap-1 ml-4">
+                        {betsOnSlot.flatMap(bet => 
+                          bet.betOnSlotIndices
+                            .map((idx, i) => ({ idx, i, playerId: bet.playerId }))
+                            .filter(b => b.idx === slot.index)
+                            .map((b, chipIdx) => {
+                              const betPlayer = players.find(p => p.id === b.playerId);
+                              return (
+                                <div
+                                  key={`${b.playerId}-${chipIdx}`}
+                                  className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-300 to-yellow-600 
+                                           border-2 border-yellow-200 shadow-lg flex items-center justify-center
+                                           text-xs font-bold text-yellow-900"
+                                  title={betPlayer?.name}
+                                >
+                                  {betPlayer?.name.slice(0, 2).toUpperCase()}
+                                </div>
+                              );
+                            })
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
               );
             })}
           </div>
         </div>
 
+        {/* Player Betting Controls */}
         <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-xl font-semibold mb-4">Colocar Apuestas (2 fichas por jugador)</h3>
-          <div className="space-y-4">
+          <h3 className="text-xl font-semibold mb-4">Jugadores</h3>
+          <div className="space-y-3">
             {players.map(player => {
               const playerBet = state.playerBets.find(b => b.playerId === player.id);
-              const betsPlaced = playerBet?.betOnAnswerIndices.length || 0;
+              const betsPlaced = playerBet?.betOnSlotIndices.length || 0;
+              const isActive = activeBettingPlayer === player.id;
+              const isComplete = betsPlaced >= 2;
 
               return (
-                <div key={player.id} className="p-4 bg-gray-50 rounded-lg">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="font-medium">{player.name}</span>
-                    <span className="text-sm text-gray-600">
-                      Fichas colocadas: {betsPlaced}/2
+                <div 
+                  key={player.id} 
+                  className={`
+                    p-4 rounded-lg border-2 transition-all cursor-pointer
+                    ${isActive 
+                      ? 'bg-blue-50 border-blue-500 ring-2 ring-blue-300' 
+                      : isComplete 
+                        ? 'bg-green-50 border-green-300' 
+                        : 'bg-gray-50 border-gray-200 hover:border-gray-400'
+                    }
+                  `}
+                  onClick={() => !isComplete && setActiveBettingPlayer(player.id)}
+                >
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-3">
+                      <span className="font-medium">{player.name}</span>
+                      {isActive && <span className="text-xs text-blue-600 font-semibold">← Apostando</span>}
+                      {isComplete && <span className="text-green-600">✓</span>}
+                    </div>
+                    <span className={`text-sm ${isComplete ? 'text-green-600' : 'text-gray-600'}`}>
+                      Fichas: {betsPlaced}/2
                     </span>
                   </div>
 
-                  {playerBet && playerBet.betOnAnswerIndices.length > 0 && (
-                    <div className="flex gap-2 mb-2">
-                      {playerBet.betOnAnswerIndices.map((betIndex: number, idx: number) => {
-                        const betAnswer = sortedAnswers[betIndex];
-                        const betPlayer = players.find(p => p.id === betAnswer.playerId);
+                  {/* Show placed bets */}
+                  {playerBet && playerBet.betOnSlotIndices.length > 0 && (
+                    <div className="flex gap-2 mt-2">
+                      {playerBet.betOnSlotIndices.map((slotIdx: number, idx: number) => {
+                        const slot = bettingBoard[slotIdx];
+                        const slotLabel = slot.isSpecial 
+                          ? 'Menor que todas' 
+                          : slot.answerGroups.map(g => g.answer).join(', ');
                         return (
-                          <div key={idx} className="flex items-center gap-2 px-3 py-1 bg-blue-100 rounded-lg">
+                          <div key={idx} className="flex items-center gap-2 px-3 py-1 bg-amber-100 rounded-lg">
                             <span className="text-sm">
-                              Apuesta en {betPlayer?.name} ({betAnswer.answer})
+                              {slotLabel} ({slot.payout}:1)
                             </span>
                             <button
-                              onClick={() => actions.removeBet(player.id, idx)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                actions.removeBet(player.id, idx);
+                              }}
                               className="text-red-500 hover:text-red-700 font-bold"
                             >
                               ×
@@ -387,20 +511,6 @@ export default function Home() {
                           </div>
                         );
                       })}
-                    </div>
-                  )}
-
-                  {betsPlaced < 2 && (
-                    <div className="flex flex-wrap gap-2">
-                      {sortedAnswers.map((_, answerIndex) => (
-                        <button
-                          key={answerIndex}
-                          onClick={() => actions.placeBet(player.id, answerIndex)}
-                          className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-sm"
-                        >
-                          Apostar en #{answerIndex + 1}
-                        </button>
-                      ))}
                     </div>
                   )}
                 </div>
@@ -425,8 +535,18 @@ export default function Home() {
     const winningInfo = getWinningAnswerInfo();
     if (!winningInfo || !currentQuestion) return null;
 
-    const { winningAnswer, winningIndex, sortedAnswers } = winningInfo;
-    const winningPlayer = players.find(p => p.id === winningAnswer.playerId);
+    const { winningAnswer, winningIndex: winningSlotIndex, sortedAnswers } = winningInfo;
+    const bettingBoard = actions.getBettingBoard();
+    const winningSlot = bettingBoard[winningSlotIndex];
+    const isSpecialWin = winningSlot?.isSpecial;
+
+    // Find players who gave the winning answer
+    const winningPlayers = isSpecialWin 
+      ? [] 
+      : players.filter(p => {
+          const pAnswer = state.playerAnswers.find(a => a.playerId === p.id);
+          return pAnswer?.answer === winningAnswer?.answer;
+        });
 
     return (
       <div className="container mx-auto p-4 max-w-4xl">
@@ -438,38 +558,64 @@ export default function Home() {
           </div>
 
           <div className="mb-6">
-            <h3 className="text-xl font-semibold mb-3">Respuesta Ganadora:</h3>
-            <div className="p-4 bg-green-100 border-2 border-green-500 rounded-lg">
+            <h3 className="text-xl font-semibold mb-3">Casilla Ganadora:</h3>
+            <div className={`p-4 border-2 rounded-lg ${
+              isSpecialWin 
+                ? 'bg-red-100 border-red-500' 
+                : 'bg-green-100 border-green-500'
+            }`}>
               <p className="text-lg font-bold">
-                {winningPlayer?.name}: {winningAnswer.answer}
+                {winningSlot?.label}
+                {winningSlot && ` (paga ${winningSlot.payout}:1)`}
               </p>
+              {winningPlayers.length > 0 && (
+                <p className="text-gray-600 mt-1">
+                  Respuesta de: {winningPlayers.map(p => p.name).join(', ')}
+                  {winningAnswer && ` (${winningAnswer.answer})`}
+                </p>
+              )}
             </div>
           </div>
 
+          {/* Betting Board Results */}
           <div className="mb-6">
-            <h3 className="text-xl font-semibold mb-3">Todas las Respuestas:</h3>
-            <div className="space-y-2">
-              {sortedAnswers.map((answer, index) => {
-                const player = players.find(p => p.id === answer.playerId);
-                const isWinning = index === winningIndex;
-                const betsOnThis = state.playerBets.filter(b =>
-                  b.betOnAnswerIndices.includes(index)
+            <h3 className="text-xl font-semibold mb-3">Mesa de Apuestas:</h3>
+            <div className="bg-emerald-800 rounded-xl p-4 space-y-2">
+              {bettingBoard.map((slot) => {
+                if (!slot.isSpecial && slot.answerGroups.length === 0) return null;
+                
+                const isWinning = slot.index === winningSlotIndex;
+                const betsOnSlot = state.playerBets.filter(b => 
+                  b.betOnSlotIndices.includes(slot.index)
+                );
+                const betCount = betsOnSlot.reduce((sum, b) => 
+                  sum + b.betOnSlotIndices.filter(idx => idx === slot.index).length, 0
                 );
 
                 return (
                   <div
-                    key={index}
-                    className={`p-3 rounded-lg ${
-                      isWinning ? 'bg-green-100 border-2 border-green-500' : 'bg-gray-50'
+                    key={slot.index}
+                    className={`p-3 rounded-lg border-2 ${
+                      isWinning 
+                        ? 'bg-yellow-400 border-yellow-500 text-yellow-900' 
+                        : slot.isSpecial 
+                          ? 'bg-red-900/60 border-red-700 text-white' 
+                          : 'bg-emerald-700/60 border-emerald-600 text-white'
                     }`}
                   >
                     <div className="flex justify-between items-center">
-                      <span className="font-medium">
-                        {player?.name}: <span className="text-blue-600">{answer.answer}</span>
-                      </span>
-                      {betsOnThis.length > 0 && (
-                        <span className="text-sm text-gray-600">
-                          {betsOnThis.length} apuesta(s)
+                      <div>
+                        <span className="font-bold">{slot.label}</span>
+                        {!slot.isSpecial && slot.answerGroups.length > 0 && (
+                          <span className="ml-2">
+                            ({slot.answerGroups.map(g => g.answer).join(', ')})
+                          </span>
+                        )}
+                      </div>
+                      {betCount > 0 && (
+                        <span className="font-semibold">
+                          {betCount} ficha(s)
+                          {isWinning && ` → +${betCount * slot.payout} pts`}
                         </span>
                       )}
                     </div>

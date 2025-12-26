@@ -10,3 +10,7 @@ export type {
   GamePhase,
   ScoringResult,
 } from '../core/types';
+
+// Betting board types and utilities
+export type { BettingSlot, AnswerGroup } from '../core/betting-board';
+export { SPECIAL_SLOT_INDEX, MIDDLE_SLOT_INDEX } from '../core/betting-board';

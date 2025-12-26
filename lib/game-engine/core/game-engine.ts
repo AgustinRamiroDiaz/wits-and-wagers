@@ -5,6 +5,7 @@ import * as AnswerManager from './answer-manager';
 import * as BettingManager from './betting-manager';
 import * as ScoringEngine from './scoring-engine';
 import * as RoundManager from './round-manager';
+import { createBettingBoard, type BettingSlot } from './betting-board';
 
 /**
  * Main game engine class for Wits and Wagers
@@ -228,13 +229,24 @@ export class WitsAndWagersEngine {
   // ============ Betting Phase ============
 
   /**
-   * Places a bet chip for a player
-   * @param playerId - ID of player
-   * @param answerIndex - Index of answer to bet on (in sorted order)
-   * @throws Error if not in betting phase or invalid index
+   * Returns the betting board with slots and grouped answers
+   * Only available during betting and results phases
    */
-  placeBet(playerId: string, answerIndex: number): void {
-    this.state = BettingManager.placeBet(this.state, playerId, answerIndex);
+  getBettingBoard(): BettingSlot[] {
+    if (this.state.phase !== 'betting' && this.state.phase !== 'results') {
+      return [];
+    }
+    return createBettingBoard(this.state.playerAnswers);
+  }
+
+  /**
+   * Places a bet chip for a player on a betting slot
+   * @param playerId - ID of player
+   * @param slotIndex - Index of slot to bet on (0-7)
+   * @throws Error if not in betting phase or invalid slot
+   */
+  placeBet(playerId: string, slotIndex: number): void {
+    this.state = BettingManager.placeBet(this.state, playerId, slotIndex);
   }
 
   /**

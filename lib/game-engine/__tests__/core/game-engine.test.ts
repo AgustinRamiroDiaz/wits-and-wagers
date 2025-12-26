@@ -2,6 +2,17 @@ import { describe, it, expect, beforeEach } from 'vitest';
 import { WitsAndWagersEngine } from '../../core/game-engine';
 import type { Question } from '../../core/types';
 
+// Helper to find slot index for a given answer value
+function findSlotForAnswer(engine: WitsAndWagersEngine, answerValue: number): number {
+  const board = engine.getBettingBoard();
+  for (const slot of board) {
+    if (slot.answerGroups.some(g => g.answer === answerValue)) {
+      return slot.index;
+    }
+  }
+  throw new Error(`No slot found for answer ${answerValue}`);
+}
+
 describe('WitsAndWagersEngine', () => {
   const mockQuestions: Question[] = [
     { question: 'Q1', answer: 100, labels: ['math'] },
@@ -222,15 +233,14 @@ describe('WitsAndWagersEngine', () => {
       expect(engine.getPhase()).toBe('betting');
       expect(engine.canFinishBetting()).toBe(false);
 
-      // Get sorted answers to find correct indices
-      const sortedAnswers = engine.getSortedAnswers();
-      const aliceAnswerIndex = sortedAnswers.findIndex((a) => a.answer === aliceAnswer);
-      const bobAnswerIndex = sortedAnswers.findIndex((a) => a.answer === bobAnswer);
+      // Find slot indices for answers using betting board
+      const aliceSlot = findSlotForAnswer(engine, aliceAnswer);
+      const bobSlot = findSlotForAnswer(engine, bobAnswer);
 
-      engine.placeBet(alice.id, aliceAnswerIndex); // Bet on own answer
-      engine.placeBet(alice.id, aliceAnswerIndex);
-      engine.placeBet(bob.id, bobAnswerIndex); // Bet on own answer
-      engine.placeBet(bob.id, bobAnswerIndex);
+      engine.placeBet(alice.id, aliceSlot); // Bet on own answer
+      engine.placeBet(alice.id, aliceSlot);
+      engine.placeBet(bob.id, bobSlot); // Bet on own answer
+      engine.placeBet(bob.id, bobSlot);
       expect(engine.canFinishBetting()).toBe(true);
 
       const scoringResult = engine.finishBetting();
@@ -239,9 +249,11 @@ describe('WitsAndWagersEngine', () => {
       expect(engine.getPhase()).toBe('results');
       expect(scoringResult.winningAnswer.answer).toBe(aliceAnswer); // Alice's answer wins (closest without going over)
 
-      // Alice: 3 (answer) + 4 (2 bets) + 0 (round bonus) = 7
+      // With 2 answers, both go to slots 4 and 5 (2:1 and 3:1 payouts)
+      // Alice's answer (80) is lower, goes to slot 4 (2:1)
+      // Alice: 3 (answer) + 4 (2 bets × 2:1) + 0 (round bonus) = 7
       expect(engine.getPlayers().find((p) => p.name === 'Alice')?.score).toBe(7);
-      // Bob: 0 (no points)
+      // Bob: 0 (no points - bet on wrong slot)
       expect(engine.getPlayers().find((p) => p.name === 'Bob')?.score).toBe(0);
 
       // Next round
@@ -260,10 +272,11 @@ describe('WitsAndWagersEngine', () => {
       engine.submitAnswer(alice.id, 80);
       engine.submitAnswer(bob.id, 120);
       engine.finishAnswering();
-      engine.placeBet(alice.id, 0);
-      engine.placeBet(alice.id, 0);
-      engine.placeBet(bob.id, 0);
-      engine.placeBet(bob.id, 0);
+      const slot1 = findSlotForAnswer(engine, 80);
+      engine.placeBet(alice.id, slot1);
+      engine.placeBet(alice.id, slot1);
+      engine.placeBet(bob.id, slot1);
+      engine.placeBet(bob.id, slot1);
       engine.finishBetting();
 
       // Round 2
@@ -271,10 +284,11 @@ describe('WitsAndWagersEngine', () => {
       engine.submitAnswer(alice.id, 180);
       engine.submitAnswer(bob.id, 220);
       engine.finishAnswering();
-      engine.placeBet(alice.id, 0);
-      engine.placeBet(alice.id, 0);
-      engine.placeBet(bob.id, 0);
-      engine.placeBet(bob.id, 0);
+      const slot2 = findSlotForAnswer(engine, 180);
+      engine.placeBet(alice.id, slot2);
+      engine.placeBet(alice.id, slot2);
+      engine.placeBet(bob.id, slot2);
+      engine.placeBet(bob.id, slot2);
       engine.finishBetting();
 
       // Should transition to game-over
@@ -345,20 +359,20 @@ describe('WitsAndWagersEngine', () => {
       engine.submitAnswer(charlie.id, charlieAnswer1);
       engine.finishAnswering();
 
-      // Find the index of Alice's answer in sorted order
-      const sortedAnswers1 = engine.getSortedAnswers();
-      const aliceAnswerIndex = sortedAnswers1.findIndex((a) => a.answer === aliceAnswer1);
+      // Find the slot for Alice's answer
+      const aliceSlot1 = findSlotForAnswer(engine, aliceAnswer1);
 
-      engine.placeBet(alice.id, aliceAnswerIndex); // Bet on self
-      engine.placeBet(alice.id, aliceAnswerIndex);
-      engine.placeBet(bob.id, aliceAnswerIndex); // Bet on Alice
-      engine.placeBet(bob.id, aliceAnswerIndex);
-      engine.placeBet(charlie.id, aliceAnswerIndex); // Bet on Alice
-      engine.placeBet(charlie.id, aliceAnswerIndex);
+      engine.placeBet(alice.id, aliceSlot1); // Bet on self
+      engine.placeBet(alice.id, aliceSlot1);
+      engine.placeBet(bob.id, aliceSlot1); // Bet on Alice
+      engine.placeBet(bob.id, aliceSlot1);
+      engine.placeBet(charlie.id, aliceSlot1); // Bet on Alice
+      engine.placeBet(charlie.id, aliceSlot1);
 
       const result1 = engine.finishBetting();
 
-      // Alice should have 3 (answer) + 4 (2 bets on self) + 0 (round 0 bonus) = 7
+      // With 3 answers, Alice's (closest to correct) goes to median slot 4 (2:1)
+      // Alice should have 3 (answer) + 4 (2 bets × 2:1) + 0 (round 0 bonus) = 7
       const aliceScoreRound1 = engine.getPlayers().find((p) => p.name === 'Alice')?.score;
       expect(aliceScoreRound1).toBe(7);
 
@@ -376,16 +390,15 @@ describe('WitsAndWagersEngine', () => {
       engine.submitAnswer(charlie.id, charlieAnswer2);
       engine.finishAnswering();
 
-      // Find the index of Alice's answer in sorted order
-      const sortedAnswers2 = engine.getSortedAnswers();
-      const aliceAnswerIndex2 = sortedAnswers2.findIndex((a) => a.answer === aliceAnswer2);
+      // Find the slot for Alice's answer
+      const aliceSlot2 = findSlotForAnswer(engine, aliceAnswer2);
 
-      engine.placeBet(alice.id, aliceAnswerIndex2); // Bet on self
-      engine.placeBet(alice.id, aliceAnswerIndex2);
-      engine.placeBet(bob.id, aliceAnswerIndex2); // Bet on Alice
-      engine.placeBet(bob.id, aliceAnswerIndex2);
-      engine.placeBet(charlie.id, aliceAnswerIndex2); // Bet on Alice
-      engine.placeBet(charlie.id, aliceAnswerIndex2);
+      engine.placeBet(alice.id, aliceSlot2); // Bet on self
+      engine.placeBet(alice.id, aliceSlot2);
+      engine.placeBet(bob.id, aliceSlot2); // Bet on Alice
+      engine.placeBet(bob.id, aliceSlot2);
+      engine.placeBet(charlie.id, aliceSlot2); // Bet on Alice
+      engine.placeBet(charlie.id, aliceSlot2);
 
       const result2 = engine.finishBetting();
 

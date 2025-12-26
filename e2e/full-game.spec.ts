@@ -5,8 +5,18 @@ import { test, expect } from '@playwright/test';
  * 
  * Scoring Rules:
  * - 3 points for submitting the winning answer (closest without going over)
- * - 2 points per bet chip on the winning answer (2 chips per player)
+ * - Points per bet chip based on slot payout (2:1 to 6:1)
  * - Round bonus = round index added if player scored > 0 that round
+ * 
+ * Slot Payouts:
+ * - Slot 0: Menor que todas (6:1) - special slot
+ * - Slot 1: 5:1 (lowest answers)
+ * - Slot 2: 4:1
+ * - Slot 3: 3:1
+ * - Slot 4: 2:1 (median, middle)
+ * - Slot 5: 3:1
+ * - Slot 6: 4:1
+ * - Slot 7: 5:1 (highest answers)
  */
 
 // Mock questions with predictable answers
@@ -24,80 +34,59 @@ const PLAYERS = ['Alice', 'Bob', 'Carol', 'Dave', 'Eve', 'Frank', 'Grace'];
 
 /**
  * Game plan for each round:
- * - Answers: All players give fixed sequential answers each round
- * - Winner: Always the highest answer that doesn't exceed the question answer
- * - Bets: Everyone bets on the winning answer (keeps scoring predictable)
+ * - Answers: All players give fixed sequential answers [10, 20, 30, 40, 50, 60, 70]
+ * - With 7 answers, they distribute to slots:
+ *   Slot 1 (5:1): 10 (Alice)
+ *   Slot 2 (4:1): 20 (Bob)
+ *   Slot 3 (3:1): 30 (Carol)
+ *   Slot 4 (2:1): 40 (Dave) - MEDIAN
+ *   Slot 5 (3:1): 50 (Eve)
+ *   Slot 6 (4:1): 60 (Frank)
+ *   Slot 7 (5:1): 70 (Grace)
  * 
- * Simplified strategy: Same answer pattern each round, everyone bets on winner
+ * - Winner: Always 70 (Grace) since all answers < question answer
+ * - Winning Slot: Slot 7 (5:1 payout)
+ * - Bets: Everyone bets on the winning slot for predictable scoring
  */
-interface RoundPlan {
-  answers: number[]; // Answer for each player (index matches PLAYERS)
-  winnerIndex: number; // Index in sorted order of winning answer
-}
 
-// Simple pattern: Player answers are always 10, 20, 30, 40, 50, 60, 70
-// Question answers are 100, 200, etc. - always higher than all player answers
-// So the winner is always the highest answer (70) which is Grace at sorted index 6
-// 
-// HOWEVER, since all answers < question answer, the winning answer is the highest (70)
-// Everyone bets both chips on the winner (index 6) for predictable scoring
-const GAME_PLAN: RoundPlan[] = [
-  { answers: [10, 20, 30, 40, 50, 60, 70], winnerIndex: 6 }, // Grace wins (70 < 100)
-  { answers: [10, 20, 30, 40, 50, 60, 70], winnerIndex: 6 }, // Grace wins (70 < 200)
-  { answers: [10, 20, 30, 40, 50, 60, 70], winnerIndex: 6 }, // Grace wins (70 < 300)
-  { answers: [10, 20, 30, 40, 50, 60, 70], winnerIndex: 6 }, // Grace wins (70 < 400)
-  { answers: [10, 20, 30, 40, 50, 60, 70], winnerIndex: 6 }, // Grace wins (70 < 500)
-  { answers: [10, 20, 30, 40, 50, 60, 70], winnerIndex: 6 }, // Grace wins (70 < 600)
-  { answers: [10, 20, 30, 40, 50, 60, 70], winnerIndex: 6 }, // Grace wins (70 < 700)
-];
-
-// All players bet both chips on the winning answer (index 6)
-const BETS_PER_PLAYER: [number, number] = [6, 6];
+const PLAYER_ANSWERS = [10, 20, 30, 40, 50, 60, 70];
+const WINNING_SLOT_PAYOUT = 5; // Slot 7 pays 5:1
 
 /**
  * Calculate expected scores based on game plan
  * 
- * With simplified strategy:
- * - Grace (index 6) wins every round with answer 70
- * - Everyone bets both chips on Grace (the winner)
+ * With 7 answers, the highest (70 from Grace) goes to slot 7 (5:1 payout)
  * 
- * Scoring per round:
- * - Grace: 3 (win) + 4 (2 winning bets) + roundBonus = 7 + roundBonus
- * - Others: 0 (no win) + 4 (2 winning bets) + roundBonus = 4 + roundBonus
+ * Scoring per round (everyone bets on winning slot 7):
+ * - Grace: 3 (win) + 10 (2 chips × 5:1) + roundBonus = 13 + roundBonus
+ * - Others: 0 (no win) + 10 (2 chips × 5:1) + roundBonus = 10 + roundBonus
  * 
  * Round bonuses: 0, 1, 2, 3, 4, 5, 6 = 21 total
- * Grace: 7*7 + 21 = 49 + 21 = 70
- * Others: 4*7 + 21 = 28 + 21 = 49
+ * Grace: 7 × 13 + 21 = 91 + 21 = 112
+ * Others: 7 × 10 + 21 = 70 + 21 = 91
  */
 function calculateExpectedScores(): Record<string, number> {
   const scores: Record<string, number> = {};
   PLAYERS.forEach(p => scores[p] = 0);
 
-  GAME_PLAN.forEach((round, roundIndex) => {
-    // Grace (player index 6) always wins
-    // Sorted order of [10,20,30,40,50,60,70]: Alice=0, Bob=1, Carol=2, Dave=3, Eve=4, Frank=5, Grace=6
-    // Winner is at sorted index 6 (Grace with 70)
-    
-    const winnerPlayerIdx = 6; // Grace
-
+  for (let round = 0; round < 7; round++) {
     PLAYERS.forEach((player, playerIdx) => {
       let points = 0;
 
-      // Points for winning answer (only Grace)
-      if (playerIdx === winnerPlayerIdx) {
+      // Points for winning answer (only Grace at index 6)
+      if (playerIdx === 6) {
         points += 3;
       }
 
-      // Everyone bets both chips on the winner (index 6)
-      // Both bets are on the winning answer, so 2 * 2 = 4 points
-      points += 4;
+      // Everyone bets both chips on the winning slot (5:1 payout)
+      points += 2 * WINNING_SLOT_PAYOUT;
 
       // Round bonus (only if scored points - everyone scores)
-      points += roundIndex;
+      points += round;
 
       scores[player] += points;
     });
-  });
+  }
 
   return scores;
 }
@@ -132,8 +121,6 @@ test.describe('Full Game E2E', () => {
 
     // Play through all 7 rounds
     for (let round = 0; round < 7; round++) {
-      const plan = GAME_PLAN[round];
-      
       // Verify we're on the correct round
       await expect(page.getByText(`Ronda ${round + 1} de 7`)).toBeVisible();
       
@@ -144,24 +131,39 @@ test.describe('Full Game E2E', () => {
       // Fill in answers for all players
       for (let i = 0; i < PLAYERS.length; i++) {
         const playerRow = page.locator('.bg-gray-50').filter({ hasText: PLAYERS[i] });
-        await playerRow.getByRole('spinbutton').fill(plan.answers[i].toString());
+        await playerRow.getByRole('spinbutton').fill(PLAYER_ANSWERS[i].toString());
       }
 
       // Submit all answers
       await page.getByRole('button', { name: 'Continuar a Apuestas' }).click();
 
       // === BETTING PHASE ===
-      await expect(page.getByText('Colocar Apuestas')).toBeVisible();
+      await expect(page.getByText('Mesa de Apuestas')).toBeVisible();
 
-      // Place bets for each player - everyone bets on #7 (winner at index 6, 1-indexed)
+      // Place bets for each player - everyone bets on Grace's answer (70)
       for (let playerIdx = 0; playerIdx < PLAYERS.length; playerIdx++) {
-        const playerSection = page.locator('.bg-gray-50').filter({ hasText: PLAYERS[playerIdx] });
+        // First click on the player row in the "Jugadores" section to make them active
+        // The player controls section is the last white bg section
+        const playerControlsSection = page.locator('.bg-white.rounded-lg.shadow-lg.p-6').last();
+        const playerRow = playerControlsSection.locator('.rounded-lg.border-2').filter({
+          hasText: PLAYERS[playerIdx]
+        });
+        await playerRow.click();
+        await page.waitForTimeout(100);
         
-        // Place first bet on winner (#7)
-        await playerSection.getByRole('button', { name: 'Apostar en #7' }).click();
+        // Verify player is now active (has the "Apostando" label)
+        await expect(playerRow.getByText('← Apostando')).toBeVisible();
         
-        // Place second bet on winner (#7)
-        await playerSection.getByRole('button', { name: 'Apostar en #7' }).click();
+        // Find the betting board slot with "70 (Grace)" and click it twice
+        const bettingBoard = page.locator('.bg-emerald-800');
+        // Look for the slot that contains "70" text
+        const slot = bettingBoard.locator('.p-4.rounded-lg').filter({ hasText: '70 (Grace)' });
+        
+        // Click twice for 2 chips
+        await slot.click();
+        await page.waitForTimeout(50);
+        await slot.click();
+        await page.waitForTimeout(50);
       }
 
       // Finish betting
@@ -188,7 +190,6 @@ test.describe('Full Game E2E', () => {
     console.log('Expected final scores:', expectedScores);
 
     // Get actual scores from the final ranking
-    // The ranking section has players listed with their scores
     const actualScores: Record<string, number> = {};
     
     // Find the ranking section (space-y-3 div after "Clasificación Final")
@@ -213,11 +214,10 @@ test.describe('Full Game E2E', () => {
       expect(actualScores[player], `${player}'s score`).toBe(expectedScores[player]);
     }
 
-    // Verify winner display (Grace should be the winner with 70 points)
+    // Verify winner display (Grace should be the winner with 112 points)
     const sortedByScore = [...PLAYERS].sort((a, b) => expectedScores[b] - expectedScores[a]);
     const winner = sortedByScore[0];
-    // The winner section has class bg-yellow-100 and contains the winner name in a bold paragraph
+    // The winner section has class bg-yellow-100 and contains the winner name
     await expect(page.locator('.bg-yellow-100 .text-yellow-700').filter({ hasText: winner })).toBeVisible();
   });
 });
-

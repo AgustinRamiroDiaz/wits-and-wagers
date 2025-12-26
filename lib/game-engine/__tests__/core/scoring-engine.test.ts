@@ -163,7 +163,10 @@ describe('Scoring Engine', () => {
       expect(result.pointsAwarded['3']).toBe(0);
     });
 
-    it('should award 2 points per winning bet chip', () => {
+    it('should award points per winning bet chip based on slot payout', () => {
+      // With 2 answers [50, 75], they go to slots 4 (median=50) and 5 (75)
+      // Slot 4 = 2:1 payout, Slot 5 = 3:1 payout
+      // 75 is the winner (closest without going over 80), it's in slot 5
       const state: GameState = {
         ...createScoringState(),
         playerAnswers: [
@@ -171,18 +174,18 @@ describe('Scoring Engine', () => {
           { playerId: '2', answer: 75 },
         ],
         playerBets: [
-          { playerId: '1', betOnAnswerIndices: [1, 1] }, // Both bets on Bob's answer (index 1)
-          { playerId: '2', betOnAnswerIndices: [0, 0] },
+          { playerId: '1', betOnSlotIndices: [5, 5] }, // Both bets on slot 5 (75, 3:1 payout)
+          { playerId: '2', betOnSlotIndices: [4, 4] }, // Both bets on slot 4 (50)
         ],
       };
 
       const result = calculateRoundScores(state, 80);
 
-      expect(result.pointsAwarded['1']).toBe(4); // 2 chips × 2 points
-      expect(result.pointsAwarded['2']).toBe(3); // Winning answer
+      expect(result.pointsAwarded['1']).toBe(6); // 2 chips × 3 points (3:1 payout)
+      expect(result.pointsAwarded['2']).toBe(3); // Winning answer only
     });
 
-    it('should award 1 point for single winning bet', () => {
+    it('should award points for single winning bet', () => {
       const state: GameState = {
         ...createScoringState(),
         playerAnswers: [
@@ -190,14 +193,14 @@ describe('Scoring Engine', () => {
           { playerId: '2', answer: 75 },
         ],
         playerBets: [
-          { playerId: '1', betOnAnswerIndices: [1, 0] }, // One bet on winner, one on loser
-          { playerId: '2', betOnAnswerIndices: [0, 0] },
+          { playerId: '1', betOnSlotIndices: [5, 4] }, // One bet on winner (slot 5), one on loser (slot 4)
+          { playerId: '2', betOnSlotIndices: [4, 4] },
         ],
       };
 
       const result = calculateRoundScores(state, 80);
 
-      expect(result.pointsAwarded['1']).toBe(2); // 1 chip × 2 points
+      expect(result.pointsAwarded['1']).toBe(3); // 1 chip × 3 points (3:1 payout)
     });
 
     it('should apply round bonus to players who scored', () => {
@@ -246,6 +249,8 @@ describe('Scoring Engine', () => {
     });
 
     it('should handle player betting on own answer', () => {
+      // With 2 answers [50, 75], they go to slots 4 (50) and 5 (75)
+      // 75 wins (closest to 80 without going over), in slot 5 (3:1 payout)
       const state: GameState = {
         ...createScoringState(),
         playerAnswers: [
@@ -253,16 +258,18 @@ describe('Scoring Engine', () => {
           { playerId: '2', answer: 75 },
         ],
         playerBets: [
-          { playerId: '2', betOnAnswerIndices: [1, 1] }, // Bob bets on himself (index 1)
+          { playerId: '2', betOnSlotIndices: [5, 5] }, // Bob bets on himself (slot 5)
         ],
       };
 
       const result = calculateRoundScores(state, 80);
 
-      expect(result.pointsAwarded['2']).toBe(7); // 3 (answer) + 4 (2 bets) = 7
+      expect(result.pointsAwarded['2']).toBe(9); // 3 (answer) + 6 (2 × 3:1 bets) = 9
     });
 
     it('should handle multiple players betting on winner', () => {
+      // With 3 answers [50, 75, 100], median 75 goes to slot 4, 50 to slot 3, 100 to slot 5
+      // 75 wins (closest to 80), in slot 4 (2:1 payout)
       const state: GameState = {
         ...createScoringState(),
         playerAnswers: [
@@ -271,20 +278,21 @@ describe('Scoring Engine', () => {
           { playerId: '3', answer: 100 },
         ],
         playerBets: [
-          { playerId: '1', betOnAnswerIndices: [1, 1] }, // Both on winner (index 1)
-          { playerId: '2', betOnAnswerIndices: [1, 1] }, // Both on self
-          { playerId: '3', betOnAnswerIndices: [1, 0] }, // One on winner
+          { playerId: '1', betOnSlotIndices: [4, 4] }, // Both on winner (slot 4, 2:1)
+          { playerId: '2', betOnSlotIndices: [4, 4] }, // Both on self
+          { playerId: '3', betOnSlotIndices: [4, 3] }, // One on winner, one on 50
         ],
       };
 
       const result = calculateRoundScores(state, 80);
 
-      expect(result.pointsAwarded['1']).toBe(4); // 0 + 4 bets
-      expect(result.pointsAwarded['2']).toBe(7); // 3 answer + 4 bets
-      expect(result.pointsAwarded['3']).toBe(2); // 0 + 2 bets (1 chip)
+      expect(result.pointsAwarded['1']).toBe(4); // 0 + 4 bets (2 × 2:1)
+      expect(result.pointsAwarded['2']).toBe(7); // 3 answer + 4 bets (2 × 2:1)
+      expect(result.pointsAwarded['3']).toBe(2); // 0 + 2 bets (1 × 2:1)
     });
 
     it('should combine answer points, bet points, and round bonus correctly', () => {
+      // With 3 answers [50, 75, 100], median 75 goes to slot 4 (2:1 payout)
       const state: GameState = {
         ...createScoringState(2), // Round 2 = +2 bonus
         playerAnswers: [
@@ -293,13 +301,13 @@ describe('Scoring Engine', () => {
           { playerId: '3', answer: 100 },
         ],
         playerBets: [
-          { playerId: '2', betOnAnswerIndices: [1, 1] }, // Bob bets on himself
+          { playerId: '2', betOnSlotIndices: [4, 4] }, // Bob bets on himself (slot 4, 2:1)
         ],
       };
 
       const result = calculateRoundScores(state, 80);
 
-      // Bob: 3 (answer) + 4 (2 bets) + 2 (bonus) = 9
+      // Bob: 3 (answer) + 4 (2 × 2:1 bets) + 2 (bonus) = 9
       expect(result.pointsAwarded['2']).toBe(9);
     });
 
@@ -322,7 +330,9 @@ describe('Scoring Engine', () => {
         { playerId: '3', answer: 75 },
         { playerId: '1', answer: 100 },
       ]);
-      expect(result.winningIndex).toBe(1);
+      // winningIndex is now the winning SLOT index, not the answer index
+      // With 3 answers, median (75) goes to slot 4
+      expect(result.winningIndex).toBe(4);
     });
   });
 

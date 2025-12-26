@@ -1,32 +1,41 @@
 import type { GameState } from './types';
+import { createBettingBoard, SPECIAL_SLOT_INDEX } from './betting-board';
 
 const MAX_BETS_PER_PLAYER = 2;
+const TOTAL_SLOTS = 8; // 0-7 slot indices
 
 /**
- * Places a bet chip for a player on a specific answer index
+ * Places a bet chip for a player on a specific betting slot
  * @param state - Current game state
  * @param playerId - ID of the player placing the bet
- * @param answerIndex - Index of the answer to bet on (in sorted order)
+ * @param slotIndex - Index of the slot to bet on (0-7)
  * @returns New game state with updated playerBets
- * @throws Error if not in betting phase or invalid answer index
+ * @throws Error if not in betting phase or invalid slot index
  */
 export function placeBet(
   state: GameState,
   playerId: string,
-  answerIndex: number
+  slotIndex: number
 ): GameState {
   if (state.phase !== 'betting') {
     throw new Error('Cannot place bet outside betting phase');
   }
 
-  if (answerIndex < 0 || answerIndex >= state.playerAnswers.length) {
-    throw new Error('Invalid answer index');
+  if (slotIndex < 0 || slotIndex >= TOTAL_SLOTS) {
+    throw new Error('Invalid slot index');
+  }
+
+  // Validate the slot has answers or is the special slot
+  const bettingBoard = createBettingBoard(state.playerAnswers);
+  const slot = bettingBoard[slotIndex];
+  if (!slot.isSpecial && slot.answerGroups.length === 0) {
+    throw new Error('Cannot bet on empty slot');
   }
 
   const existingBet = state.playerBets.find((b) => b.playerId === playerId);
 
   // Prevent more than MAX_BETS_PER_PLAYER bets
-  if (existingBet && existingBet.betOnAnswerIndices.length >= MAX_BETS_PER_PLAYER) {
+  if (existingBet && existingBet.betOnSlotIndices.length >= MAX_BETS_PER_PLAYER) {
     return state; // Silently ignore additional bets
   }
 
@@ -35,13 +44,13 @@ export function placeBet(
         b.playerId === playerId
           ? {
               ...b,
-              betOnAnswerIndices: [...b.betOnAnswerIndices, answerIndex],
+              betOnSlotIndices: [...b.betOnSlotIndices, slotIndex],
             }
           : b
       )
     : [
         ...state.playerBets,
-        { playerId, betOnAnswerIndices: [answerIndex] },
+        { playerId, betOnSlotIndices: [slotIndex] },
       ];
 
   return {
@@ -68,7 +77,7 @@ export function removeBet(
       b.playerId === playerId
         ? {
             ...b,
-            betOnAnswerIndices: b.betOnAnswerIndices.filter(
+            betOnSlotIndices: b.betOnSlotIndices.filter(
               (_: number, i: number) => i !== betIndex
             ),
           }
@@ -86,7 +95,7 @@ export function canFinishBetting(state: GameState): boolean {
   return (
     state.playerBets.length === state.players.length &&
     state.playerBets.every(
-      (b) => b.betOnAnswerIndices.length === MAX_BETS_PER_PLAYER
+      (b) => b.betOnSlotIndices.length === MAX_BETS_PER_PLAYER
     )
   );
 }

@@ -17,7 +17,7 @@ export interface PlayerAnswer {
 
 export interface PlayerBet {
   playerId: string;
-  betOnAnswerIndices: number[];
+  betOnSlotIndices: number[]; // Indices of betting board slots (0-7)
 }
 
 export type GamePhase =

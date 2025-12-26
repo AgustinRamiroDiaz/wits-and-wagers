@@ -189,7 +189,7 @@ describe('Round Manager', () => {
         currentQuestionIndex: questionIndex,
         phase: 'results',
         playerAnswers: [{ playerId: '1', answer: 50 }],
-        playerBets: [{ playerId: '1', betOnAnswerIndices: [0, 1] }],
+        playerBets: [{ playerId: '1', betOnSlotIndices: [3, 4] }],
       };
     }
 
@@ -280,7 +280,7 @@ describe('Round Manager', () => {
         currentQuestionIndex: 2,
         phase: 'game-over',
         playerAnswers: [{ playerId: '1', answer: 50 }],
-        playerBets: [{ playerId: '1', betOnAnswerIndices: [0, 1] }],
+        playerBets: [{ playerId: '1', betOnSlotIndices: [3, 4] }],
         scoreHistory: {
           '1': [0, 10, 25],
           '2': [0, 15, 30],

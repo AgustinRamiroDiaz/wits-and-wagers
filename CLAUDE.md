@@ -74,3 +74,4 @@ e2e/                              # End-to-end tests
 2. Run unit tests in watch mode: `npm test -- --watch`
 3. After completing a feature, run e2e tests: `npm run test:e2e`
 
+
