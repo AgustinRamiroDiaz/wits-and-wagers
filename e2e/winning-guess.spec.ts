@@ -93,6 +93,123 @@ async function placeBetsOnSpecialSlot(page: Page): Promise<void> {
   }
 }
 
+test.describe('Even Number of Unique Guesses', () => {
+  
+  test('middle slot (2:1) is left empty with 2 unique guesses', async ({ page }) => {
+    await page.route('/questions.json', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([
+          { question: 'The answer is 100', answer: 100, labels: ['test'] },
+        ]),
+      });
+    });
+
+    await page.goto('/');
+    await expect(page.getByRole('heading', { name: 'Wits & Wagers' })).toBeVisible();
+    await expect(page.getByText('1 preguntas disponibles')).toBeVisible({ timeout: 10000 });
+
+    // Add only 2 players for exactly 2 unique guesses
+    for (const name of ['Alice', 'Bob']) {
+      await page.getByPlaceholder('Nombre del jugador').fill(name);
+      await page.getByRole('button', { name: 'Agregar' }).click();
+      await expect(page.getByText(name)).toBeVisible();
+    }
+
+    await page.getByRole('spinbutton').fill('1');
+    await page.getByRole('button', { name: 'Comenzar Juego' }).click();
+
+    // Alice: 50, Bob: 150 (2 unique guesses, even number)
+    await page.locator('.bg-gray-50').filter({ hasText: 'Alice' }).getByRole('spinbutton').fill('50');
+    await page.locator('.bg-gray-50').filter({ hasText: 'Bob' }).getByRole('spinbutton').fill('150');
+
+    await page.getByRole('button', { name: 'Continuar a Apuestas' }).click();
+    await expect(page.getByText('Mesa de Apuestas')).toBeVisible();
+
+    // Verify middle slot (2:1) is empty - it should NOT contain any answers
+    const bettingBoard = page.locator('.bg-emerald-800');
+    
+    // The "Paga 2 a 1" slot should exist but not contain any player answers
+    const middleSlot = bettingBoard.locator('.p-4.rounded-lg').filter({ hasText: 'Paga 2 a 1' });
+    await expect(middleSlot).toBeVisible();
+    // It should NOT contain any player names (Alice or Bob)
+    await expect(middleSlot).not.toContainText('Alice');
+    await expect(middleSlot).not.toContainText('Bob');
+    
+    // Alice (lower) should be in slot 3 (3:1)
+    const aliceSlot = bettingBoard.locator('.p-4.rounded-lg').filter({ hasText: '50 (Alice)' });
+    await expect(aliceSlot).toBeVisible();
+    await expect(aliceSlot).toContainText('Paga 3 a 1');
+    
+    // Bob (higher) should be in slot 5 (3:1)
+    const bobSlot = bettingBoard.locator('.p-4.rounded-lg').filter({ hasText: '150 (Bob)' });
+    await expect(bobSlot).toBeVisible();
+    await expect(bobSlot).toContainText('Paga 3 a 1');
+  });
+
+  test('middle slot (2:1) is left empty with 4 unique guesses', async ({ page }) => {
+    await page.route('/questions.json', async route => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([
+          { question: 'The answer is 100', answer: 100, labels: ['test'] },
+        ]),
+      });
+    });
+
+    await page.goto('/');
+    await expect(page.getByRole('heading', { name: 'Wits & Wagers' })).toBeVisible();
+    await expect(page.getByText('1 preguntas disponibles')).toBeVisible({ timeout: 10000 });
+
+    // Add 4 players for exactly 4 unique guesses
+    const players = ['Alice', 'Bob', 'Carol', 'Dave'];
+    for (const name of players) {
+      await page.getByPlaceholder('Nombre del jugador').fill(name);
+      await page.getByRole('button', { name: 'Agregar' }).click();
+      await expect(page.getByText(name)).toBeVisible();
+    }
+
+    await page.getByRole('spinbutton').fill('1');
+    await page.getByRole('button', { name: 'Comenzar Juego' }).click();
+
+    // 4 unique guesses: 10, 50, 150, 200
+    await page.locator('.bg-gray-50').filter({ hasText: 'Alice' }).getByRole('spinbutton').fill('10');
+    await page.locator('.bg-gray-50').filter({ hasText: 'Bob' }).getByRole('spinbutton').fill('50');
+    await page.locator('.bg-gray-50').filter({ hasText: 'Carol' }).getByRole('spinbutton').fill('150');
+    await page.locator('.bg-gray-50').filter({ hasText: 'Dave' }).getByRole('spinbutton').fill('200');
+
+    await page.getByRole('button', { name: 'Continuar a Apuestas' }).click();
+    await expect(page.getByText('Mesa de Apuestas')).toBeVisible();
+
+    const bettingBoard = page.locator('.bg-emerald-800');
+    
+    // Middle slot (2:1) should be empty
+    const middleSlot = bettingBoard.locator('.p-4.rounded-lg').filter({ hasText: 'Paga 2 a 1' });
+    await expect(middleSlot).toBeVisible();
+    await expect(middleSlot).not.toContainText('Alice');
+    await expect(middleSlot).not.toContainText('Bob');
+    await expect(middleSlot).not.toContainText('Carol');
+    await expect(middleSlot).not.toContainText('Dave');
+    
+    // Two middle guesses (50, 150) should be in slots 3 and 5 (both 3:1)
+    const slot3 = bettingBoard.locator('.p-4.rounded-lg').filter({ hasText: '50 (Bob)' });
+    await expect(slot3).toContainText('Paga 3 a 1');
+    
+    const slot5 = bettingBoard.locator('.p-4.rounded-lg').filter({ hasText: '150 (Carol)' });
+    await expect(slot5).toContainText('Paga 3 a 1');
+    
+    // Lowest (10) should be in slot 2 (4:1)
+    const slot2 = bettingBoard.locator('.p-4.rounded-lg').filter({ hasText: '10 (Alice)' });
+    await expect(slot2).toContainText('Paga 4 a 1');
+    
+    // Highest (200) should be in slot 6 (4:1)
+    const slot6 = bettingBoard.locator('.p-4.rounded-lg').filter({ hasText: '200 (Dave)' });
+    await expect(slot6).toContainText('Paga 4 a 1');
+  });
+});
+
 test.describe('Winning Guess Rule: Closest Without Going Over', () => {
   
   test('closest guess below correct answer wins', async ({ page }) => {

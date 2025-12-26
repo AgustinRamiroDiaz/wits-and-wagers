@@ -28,7 +28,16 @@ export function placeBet(
   // Validate the slot has answers or is the special slot
   const bettingBoard = createBettingBoard(state.playerAnswers);
   const slot = bettingBoard[slotIndex];
-  if (!slot.isSpecial && slot.answerGroups.length === 0) {
+  
+  // Count unique answer groups to check for even number of guesses
+  const uniqueGroupCount = bettingBoard.filter(s => !s.isSpecial && s.answerGroups.length > 0).length;
+  const isEvenUniqueGuesses = uniqueGroupCount % 2 === 0;
+  const MIDDLE_SLOT_INDEX = 4;
+  
+  // Allow betting on empty middle slot when there's an even number of unique guesses
+  const isAllowedEmptySlot = slotIndex === MIDDLE_SLOT_INDEX && isEvenUniqueGuesses;
+  
+  if (!slot.isSpecial && slot.answerGroups.length === 0 && !isAllowedEmptySlot) {
     throw new Error('Cannot bet on empty slot');
   }
 

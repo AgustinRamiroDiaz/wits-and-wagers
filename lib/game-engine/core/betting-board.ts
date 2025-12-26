@@ -61,9 +61,16 @@ export function groupAnswersByValue(answers: PlayerAnswer[]): AnswerGroup[] {
 /**
  * Assigns answer groups to betting slots, filling from the middle outward.
  * 
- * With N groups, the median goes in slot 4 (middle).
- * Lower values fill slots 3, 2, 1 (going left/up).
- * Higher values fill slots 5, 6, 7 (going right/down).
+ * ODD number of groups:
+ *   - Median goes in slot 4 (middle, 2:1 payout)
+ *   - Lower values fill slots 3, 2, 1
+ *   - Higher values fill slots 5, 6, 7
+ * 
+ * EVEN number of groups:
+ *   - Slot 4 (2:1) is left EMPTY
+ *   - Two middle groups go to slots 3 and 5 (both 3:1 payout)
+ *   - Lower values fill slots 2, 1
+ *   - Higher values fill slots 6, 7
  */
 export function assignGroupsToSlots(groups: AnswerGroup[]): BettingSlot[] {
   // Initialize all slots with empty answer groups
@@ -74,22 +81,46 @@ export function assignGroupsToSlots(groups: AnswerGroup[]): BettingSlot[] {
   
   if (groups.length === 0) return slots;
   
-  // Find the median index in the groups array
-  const medianIdx = Math.floor((groups.length - 1) / 2);
+  const isEven = groups.length % 2 === 0;
   
-  // Place median group in middle slot
-  slots[MIDDLE_SLOT_INDEX].answerGroups = [groups[medianIdx]];
-  
-  // Place groups below median (lower values) in slots 3, 2, 1
-  let lowerSlotIdx = MIDDLE_SLOT_INDEX - 1; // Start at slot 3
-  for (let i = medianIdx - 1; i >= 0 && lowerSlotIdx >= 1; i--, lowerSlotIdx--) {
-    slots[lowerSlotIdx].answerGroups = [groups[i]];
-  }
-  
-  // Place groups above median (higher values) in slots 5, 6, 7
-  let upperSlotIdx = MIDDLE_SLOT_INDEX + 1; // Start at slot 5
-  for (let i = medianIdx + 1; i < groups.length && upperSlotIdx <= 7; i++, upperSlotIdx++) {
-    slots[upperSlotIdx].answerGroups = [groups[i]];
+  if (isEven) {
+    // EVEN number of groups: leave middle slot empty
+    // Two middle groups go to slots 3 and 5
+    const lowerMiddleIdx = groups.length / 2 - 1;
+    const upperMiddleIdx = groups.length / 2;
+    
+    slots[3].answerGroups = [groups[lowerMiddleIdx]];
+    slots[5].answerGroups = [groups[upperMiddleIdx]];
+    
+    // Place groups below lower-middle in slots 2, 1
+    let lowerSlotIdx = 2;
+    for (let i = lowerMiddleIdx - 1; i >= 0 && lowerSlotIdx >= 1; i--, lowerSlotIdx--) {
+      slots[lowerSlotIdx].answerGroups = [groups[i]];
+    }
+    
+    // Place groups above upper-middle in slots 6, 7
+    let upperSlotIdx = 6;
+    for (let i = upperMiddleIdx + 1; i < groups.length && upperSlotIdx <= 7; i++, upperSlotIdx++) {
+      slots[upperSlotIdx].answerGroups = [groups[i]];
+    }
+  } else {
+    // ODD number of groups: median goes in middle slot
+    const medianIdx = Math.floor((groups.length - 1) / 2);
+    
+    // Place median group in middle slot
+    slots[MIDDLE_SLOT_INDEX].answerGroups = [groups[medianIdx]];
+    
+    // Place groups below median (lower values) in slots 3, 2, 1
+    let lowerSlotIdx = MIDDLE_SLOT_INDEX - 1; // Start at slot 3
+    for (let i = medianIdx - 1; i >= 0 && lowerSlotIdx >= 1; i--, lowerSlotIdx--) {
+      slots[lowerSlotIdx].answerGroups = [groups[i]];
+    }
+    
+    // Place groups above median (higher values) in slots 5, 6, 7
+    let upperSlotIdx = MIDDLE_SLOT_INDEX + 1; // Start at slot 5
+    for (let i = medianIdx + 1; i < groups.length && upperSlotIdx <= 7; i++, upperSlotIdx++) {
+      slots[upperSlotIdx].answerGroups = [groups[i]];
+    }
   }
   
   return slots;

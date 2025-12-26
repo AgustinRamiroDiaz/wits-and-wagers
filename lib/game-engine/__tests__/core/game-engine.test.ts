@@ -249,10 +249,11 @@ describe('WitsAndWagersEngine', () => {
       expect(engine.getPhase()).toBe('results');
       expect(scoringResult.winningAnswer.answer).toBe(aliceAnswer); // Alice's answer wins (closest without going over)
 
-      // With 2 answers, both go to slots 4 and 5 (2:1 and 3:1 payouts)
-      // Alice's answer (80) is lower, goes to slot 4 (2:1)
-      // Alice: 3 (answer) + 4 (2 bets × 2:1) + 0 (round bonus) = 7
-      expect(engine.getPlayers().find((p) => p.name === 'Alice')?.score).toBe(7);
+      // With 2 answers (EVEN), middle slot (2:1) is empty
+      // Alice's answer (lower) goes to slot 3 (3:1)
+      // Bob's answer (higher) goes to slot 5 (3:1)
+      // Alice: 3 (answer) + 6 (2 bets × 3:1) + 0 (round bonus) = 9
+      expect(engine.getPlayers().find((p) => p.name === 'Alice')?.score).toBe(9);
       // Bob: 0 (no points - bet on wrong slot)
       expect(engine.getPlayers().find((p) => p.name === 'Bob')?.score).toBe(0);
 

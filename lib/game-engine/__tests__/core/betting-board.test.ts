@@ -90,6 +90,67 @@ describe('Betting Board', () => {
       expect(slots[6].answerGroups[0].answer).toBe(60);
       expect(slots[7].answerGroups[0].answer).toBe(70);
     });
+
+    // Tests for EVEN number of unique guesses - middle slot (2:1) should be left open
+    describe('even number of unique guesses', () => {
+      it('should leave middle slot (2:1) empty with 2 answers', () => {
+        const groups = [
+          { answer: 10, playerIds: ['1'] },
+          { answer: 20, playerIds: ['2'] },
+        ];
+        const slots = assignGroupsToSlots(groups);
+
+        // Middle slot (4, 2:1) should be empty
+        expect(slots[MIDDLE_SLOT_INDEX].answerGroups).toEqual([]);
+        // Two middle guesses go to the two "Pays 3 to 1" slots (3 and 5)
+        expect(slots[3].answerGroups).toEqual([{ answer: 10, playerIds: ['1'] }]);
+        expect(slots[5].answerGroups).toEqual([{ answer: 20, playerIds: ['2'] }]);
+      });
+
+      it('should leave middle slot (2:1) empty with 4 answers', () => {
+        const groups = [
+          { answer: 10, playerIds: ['1'] },
+          { answer: 20, playerIds: ['2'] },
+          { answer: 30, playerIds: ['3'] },
+          { answer: 40, playerIds: ['4'] },
+        ];
+        const slots = assignGroupsToSlots(groups);
+
+        // Middle slot (4, 2:1) should be empty
+        expect(slots[MIDDLE_SLOT_INDEX].answerGroups).toEqual([]);
+        // Two middle guesses (20, 30) go to slots 3 and 5
+        expect(slots[3].answerGroups).toEqual([{ answer: 20, playerIds: ['2'] }]);
+        expect(slots[5].answerGroups).toEqual([{ answer: 30, playerIds: ['3'] }]);
+        // Lower (10) goes to slot 2
+        expect(slots[2].answerGroups).toEqual([{ answer: 10, playerIds: ['1'] }]);
+        // Higher (40) goes to slot 6
+        expect(slots[6].answerGroups).toEqual([{ answer: 40, playerIds: ['4'] }]);
+      });
+
+      it('should leave middle slot (2:1) empty with 6 answers', () => {
+        const groups = [
+          { answer: 10, playerIds: ['1'] },
+          { answer: 20, playerIds: ['2'] },
+          { answer: 30, playerIds: ['3'] },
+          { answer: 40, playerIds: ['4'] },
+          { answer: 50, playerIds: ['5'] },
+          { answer: 60, playerIds: ['6'] },
+        ];
+        const slots = assignGroupsToSlots(groups);
+
+        // Middle slot (4, 2:1) should be empty
+        expect(slots[MIDDLE_SLOT_INDEX].answerGroups).toEqual([]);
+        // Two middle guesses (30, 40) go to slots 3 and 5
+        expect(slots[3].answerGroups).toEqual([{ answer: 30, playerIds: ['3'] }]);
+        expect(slots[5].answerGroups).toEqual([{ answer: 40, playerIds: ['4'] }]);
+        // Lower values fill slots 2, 1
+        expect(slots[2].answerGroups).toEqual([{ answer: 20, playerIds: ['2'] }]);
+        expect(slots[1].answerGroups).toEqual([{ answer: 10, playerIds: ['1'] }]);
+        // Higher values fill slots 6, 7
+        expect(slots[6].answerGroups).toEqual([{ answer: 50, playerIds: ['5'] }]);
+        expect(slots[7].answerGroups).toEqual([{ answer: 60, playerIds: ['6'] }]);
+      });
+    });
   });
 
   describe('getWinningSlotIndex - Closest Without Going Over', () => {

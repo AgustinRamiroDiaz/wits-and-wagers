@@ -340,12 +340,20 @@ export default function Home() {
   if (phase === 'betting') {
     const bettingBoard = actions.getBettingBoard();
 
+    // Count unique answer groups to determine if it's even
+    const uniqueGroupCount = bettingBoard.filter(s => !s.isSpecial && s.answerGroups.length > 0).length;
+    const isEvenUniqueGuesses = uniqueGroupCount % 2 === 0;
+
     // Get slot label display with answers
     const getSlotDisplay = (slot: typeof bettingBoard[0]) => {
       if (slot.isSpecial) {
         return slot.label;
       }
       if (slot.answerGroups.length === 0) {
+        // Show message for empty middle slot when there's an even number of guesses
+        if (slot.index === 4 && isEvenUniqueGuesses) {
+          return '(Casilla vacía)';
+        }
         return null; // Empty slot
       }
       const answers = slot.answerGroups.map(g => {
@@ -373,13 +381,20 @@ export default function Home() {
           <div className="space-y-2">
             {bettingBoard.map((slot) => {
               const slotDisplay = getSlotDisplay(slot);
-              const isClickable = slot.isSpecial || slot.answerGroups.length > 0;
+              // Count unique answer groups to determine if it's even
+              const uniqueGroupCount = bettingBoard.filter(s => !s.isSpecial && s.answerGroups.length > 0).length;
+              const isEvenUniqueGuesses = uniqueGroupCount % 2 === 0;
+              // Middle slot (index 4) should be shown even when empty if there's an even number of guesses
+              const isMiddleSlot = slot.index === 4;
+              const shouldShowEmptySlot = isMiddleSlot && isEvenUniqueGuesses && slot.answerGroups.length === 0;
+              
+              const isClickable = slot.isSpecial || slot.answerGroups.length > 0 || shouldShowEmptySlot;
               const betsOnSlot = state.playerBets.filter(b => 
                 b.betOnSlotIndices.includes(slot.index)
               );
               
-              // Skip empty non-special slots
-              if (!slot.isSpecial && slot.answerGroups.length === 0) {
+              // Skip empty non-special slots, except for the middle slot when there's an even number of guesses
+              if (!slot.isSpecial && slot.answerGroups.length === 0 && !shouldShowEmptySlot) {
                 return null;
               }
 
