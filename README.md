@@ -8,6 +8,8 @@ A digital implementation of the Wits & Wagers party game built with Next.js. Pla
 
 ## Game Rules
 
+https://world-of-board-games.com.sg/docs/Wits-Wagers.pdf
+
 1. **Setup**: Add 2-7 players to the game
 2. **Answering**: Each round, all players submit their numerical answer to a trivia question
 3. **Betting**: Players place bets on which answer they think is closest without going over
