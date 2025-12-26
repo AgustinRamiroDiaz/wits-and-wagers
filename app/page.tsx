@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useGame } from '@/lib/game-engine/react';
 import type { Question } from '@/lib/game-engine/react';
+import { createBettingBoard, getWinningSlotIndex } from '@/lib/game-engine/core/betting-board';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from '@/components/ui/chart';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 
@@ -121,9 +122,9 @@ export default function Home() {
       ? validAnswers[validAnswers.length - 1]
       : sortedAnswers[0];
 
-    const winningIndex = sortedAnswers.findIndex(
-      a => a.playerId === winningAnswer.playerId && a.answer === winningAnswer.answer
-    );
+    // Use betting board logic to get the correct winning slot index
+    const bettingBoard = createBettingBoard(state.playerAnswers);
+    const winningIndex = getWinningSlotIndex(bettingBoard, currentQuestion.answer);
 
     return { winningAnswer, winningIndex, sortedAnswers };
   };
