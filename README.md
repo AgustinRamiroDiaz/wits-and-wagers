@@ -4,7 +4,7 @@ A digital implementation of the Wits & Wagers party game built with Next.js. Pla
 
 ## 🎮 Play Online
 
-**[Play Wits & Wagers](https://yourusername.github.io/wits-and-wagers/)**
+**[Play Wits & Wagers]([https://yourusername.github.io/wits-and-wagers/](https://agustinramirodiaz.github.io/wits-and-wagers/))**
 
 ## Game Rules
 
